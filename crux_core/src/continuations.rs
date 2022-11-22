@@ -1,37 +1,42 @@
-use crate::{Command, Request, Response, ResponseBody};
+use crate::{EventConstructor, Request, Response};
 use std::{collections::HashMap, sync::RwLock};
 use uuid::Uuid;
 
-type Store<Message> = HashMap<[u8; 16], Box<dyn FnOnce(ResponseBody) -> Message + Sync + Send>>;
-pub(crate) struct ContinuationStore<Message>(RwLock<Store<Message>>);
+type Store<Event> = HashMap<[u8; 16], Box<dyn EventConstructor<Event>>>;
+pub(crate) struct ContinuationStore<Event>(RwLock<Store<Event>>);
 
-impl<Message> Default for ContinuationStore<Message> {
+impl<Event> Default for ContinuationStore<Event> {
     fn default() -> Self {
         Self(RwLock::new(HashMap::new()))
     }
 }
 
-impl<Message> ContinuationStore<Message> {
-    pub(crate) fn pause(&self, cmd: Command<Message>) -> Request {
-        let Command {
-            body,
-            msg_constructor,
-        } = cmd;
+impl<Event> ContinuationStore<Event> {
+    pub(crate) fn pause<Effect>(
+        &self,
+        effect: Effect,
+        event_ctor: Option<Box<dyn EventConstructor<Event>>>,
+    ) -> Request<Effect> {
         let uuid = *Uuid::new_v4().as_bytes();
-        if let Some(msg_constructor) = msg_constructor {
+
+        if let Some(evt_constructor) = event_ctor {
             self.0
                 .write()
                 .expect("Continuation RwLock poisoned.")
-                .insert(uuid, msg_constructor);
-        }
+                .insert(uuid, evt_constructor);
+        };
+
         Request {
             uuid: uuid.to_vec(),
-            body,
+            effect,
         }
     }
 
-    pub(crate) fn resume(&self, response: Response) -> Message {
-        let Response { uuid, body } = response;
+    pub(crate) fn resume<Outcome>(&self, response: Response<Outcome>) -> Event {
+        let Response {
+            uuid,
+            outcome: body,
+        } = response;
         let cont = self
             .0
             .write()
@@ -39,6 +44,6 @@ impl<Message> ContinuationStore<Message> {
             .remove(&uuid[..])
             .unwrap_or_else(|| panic!("Continuation with UUID {:?} not found.", uuid));
 
-        cont(body)
+        cont(body.into())
     }
 }

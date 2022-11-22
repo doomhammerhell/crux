@@ -1,25 +1,42 @@
 //! TODO mod docs
 
-use crate::{Command, RequestBody, ResponseBody};
+use serde::{Deserialize, Serialize};
+
+use crate::{Command, IntoEventConstructor};
+
+#[derive(Serialize)]
+pub enum Method {
+    Get,
+    Post,
+    Update,
+    Delete,
+}
+
+#[derive(Serialize)]
+pub struct Request {
+    pub url: String,
+    pub method: Method,
+}
+
+#[derive(Deserialize)]
+pub struct Response {
+    pub body: Vec<u8>,
+}
 
 /// TODO docs
-pub fn get<F, Message>(url: String, msg: F) -> Command<Message>
+pub fn get<F, Effect, Event>(url: String, evt: F) -> Command<Effect, Event>
 where
-    F: FnOnce(Vec<u8>) -> Message + Sync + Send + 'static,
+    F: FnOnce(Vec<u8>) -> Event + Send + Sync + 'static,
+    Effect: From<Request>,
 {
-    let body = RequestBody::Http(url);
+    let effect = Request {
+        url,
+        method: Method::Get,
+    }
+    .into();
 
     Command {
-        body: body.clone(),
-        msg_constructor: Some(Box::new(move |rb| {
-            if let ResponseBody::Http(data) = rb {
-                return msg(data);
-            }
-
-            panic!(
-                "Attempt to continue HTTP request with different response {:?}",
-                body
-            );
-        })),
+        effect,
+        event_constructor: Some(Box::new(|output| evt.into_event_constructor(output))),
     }
 }

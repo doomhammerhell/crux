@@ -1,5 +1,7 @@
-use crux_core::{platform, App, Command};
+use crux_core::{App, Command};
 use serde::{Deserialize, Serialize};
+
+use crate::effects::{Effect, Outcome};
 
 #[derive(Default)]
 pub struct Platform;
@@ -16,15 +18,16 @@ pub enum PlatformMsg {
 }
 
 impl App for Platform {
-    type Message = PlatformMsg;
+    type Event = PlatformMsg;
     type Model = Model;
     type ViewModel = Model;
+    type AppRequest = ();
 
     fn update(
         &self,
-        msg: <Self as App>::Message,
-        model: &mut <Self as App>::Model,
-    ) -> Vec<Command<PlatformMsg>> {
+        msg: PlatformMsg,
+        model: &mut Model,
+    ) -> Vec<Command<Effect, Outcome, PlatformMsg>> {
         match msg {
             PlatformMsg::Get => vec![platform::get(Box::new(PlatformMsg::Set))],
             PlatformMsg::Set(platform) => {
@@ -34,7 +37,7 @@ impl App for Platform {
         }
     }
 
-    fn view(&self, model: &<Self as App>::Model) -> <Self as App>::ViewModel {
+    fn view(&self, model: &Model) -> Model {
         Model {
             platform: model.platform.clone(),
         }

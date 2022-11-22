@@ -1,25 +1,17 @@
 //! TODO mod docs
 
-use crate::{Command, RequestBody, ResponseBody};
+use crate::{Command, EventConstructor};
+
+pub struct PlatformRequest;
 
 /// TODO docs
-pub fn get<F, Message>(msg: F) -> Command<Message>
+pub fn get<EC, Effect, Event>(evt: EC) -> Command<Effect, Event>
 where
-    F: FnOnce(String) -> Message + Sync + Send + 'static,
+    EC: EventConstructor<Event>,
+    Effect: From<PlatformRequest>,
 {
-    let body = RequestBody::Platform;
-
     Command {
-        body: body.clone(),
-        msg_constructor: Some(Box::new(move |rb| {
-            if let ResponseBody::Platform(data) = rb {
-                return msg(data);
-            }
-
-            panic!(
-                "Attempt to continue Platform request with different response {:?}",
-                body
-            );
-        })),
+        effect: PlatformRequest.into(),
+        event_constructor: Some(Box::new(move |outcome| evt(outcome.into()))),
     }
 }

@@ -1,25 +1,17 @@
 //! TODO mod docs
 
-use crate::{Command, RequestBody, ResponseBody};
+use crate::{Command, EventConstructor};
+
+pub struct TimeRequest;
 
 /// TODO docs
-pub fn get<F, Message>(msg: F) -> Command<Message>
+pub fn get<EC, Effect, Outcome, Event>(evt: EC) -> Command<Effect, Event>
 where
-    F: FnOnce(String) -> Message + Sync + Send + 'static,
+    EC: EventConstructor<Event>,
+    Effect: From<TimeRequest>,
 {
-    let body = RequestBody::Time;
-
     Command {
-        body: body.clone(),
-        msg_constructor: Some(Box::new(move |rb| {
-            if let ResponseBody::Time(data) = rb {
-                return msg(data);
-            }
-
-            panic!(
-                "Attempt to continue Time request with different response {:?}",
-                body
-            );
-        })),
+        effect: TimeRequest.into(),
+        event_constructor: Some(Box::new(move |outcome: Outcome| evt(outcome.into()))),
     }
 }

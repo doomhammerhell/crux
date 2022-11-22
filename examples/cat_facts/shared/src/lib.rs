@@ -1,15 +1,17 @@
 pub use app::*;
+use crux_core::Core;
+pub use effects::{Effect, Outcome};
 use lazy_static::lazy_static;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 pub mod app;
-
+pub mod effects;
 // TODO hide this plumbing
 
 uniffi_macros::include_scaffolding!("shared");
 
 lazy_static! {
-    static ref CORE: Core<CatFacts> = Core::new();
+    static ref CORE: Core<Effect, Outcome, CatFacts> = Core::new();
 }
 
 #[wasm_bindgen]

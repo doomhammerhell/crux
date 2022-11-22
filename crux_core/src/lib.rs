@@ -109,26 +109,30 @@
 #[cfg(feature = "typegen")]
 pub mod typegen;
 
+pub mod command;
 mod continuations;
 pub mod http;
 pub mod key_value;
 pub mod platform;
 pub mod time;
 
+use command::{Command, EventConstructor, IntoEventConstructor};
 use continuations::ContinuationStore;
 use serde::{Deserialize, Serialize};
-use std::sync::RwLock;
+use std::{marker::PhantomData, sync::RwLock};
 
 /// Implement [App] on your type to make it into a Crux app. Use your type implementing [App]
 /// as the type argument to [Core].
 pub trait App: Default {
     /// Message, typically an `enum` defines the actions that can be taken to update the application state.
-    type Message;
+    type Event;
     /// Model, typically a `struct` defines the internal state of the application
     type Model: Default;
     /// ViewModel, typically a `struct` describes the user interface that should be
     /// displayed to the user
     type ViewModel: Serialize;
+
+    type Effect: Serialize;
 
     /// Update method defines the transition from one `model` state to another in response to a `msg`.
     ///
@@ -136,33 +140,15 @@ pub trait App: Default {
     /// Typically, the function should return at least [`Command::render`] to update the user interface.
     fn update(
         &self,
-        msg: <Self as App>::Message,
-        model: &mut <Self as App>::Model,
-    ) -> Vec<Command<<Self as App>::Message>>;
+        msg: Self::Event,
+        model: &mut Self::Model,
+    ) -> Vec<Command<Self::Effect, Self::Event>>;
 
     /// View method is used by the Shell to request the current state of the user interface
-    fn view(&self, model: &<Self as App>::Model) -> <Self as App>::ViewModel;
+    fn view(&self, model: &Self::Model) -> Self::ViewModel;
 }
 
-/// Command captures the intent for a side-effect. Commands are return by the [`App::update`] function.
-///
-/// You should never create a Command yourself, instead use one of the capabilities to create a command.
-/// Command is generic over `Message` in order to carry a "callback" which will be sent to the [`App::update`]
-/// function when the command has been executed, and passed the resulting data.
-pub struct Command<Message> {
-    body: RequestBody,
-    msg_constructor: Option<Box<dyn FnOnce(ResponseBody) -> Message + Send + Sync>>,
-}
-
-impl<Message: 'static> Command<Message> {
-    /// The built in command to request an update of the user interface from the Shell.
-    pub fn render() -> Command<Message> {
-        Command {
-            body: RequestBody::Render,
-            msg_constructor: None,
-        }
-    }
-
+impl<Effect, Event: 'static> Command<Effect, Event> {
     /// Lift is used to convert a Command with one message type to a command with another.
     ///
     /// This is normally used when composing applications. A typical case in the top-level
@@ -178,21 +164,30 @@ impl<Message: 'static> Command<Message> {
     ///     // ...
     /// }
     /// ```
-    pub fn lift<ParentMsg, F>(commands: Vec<Command<Message>>, f: F) -> Vec<Command<ParentMsg>>
+    pub fn lift<ParentMsg, F>(
+        commands: Vec<Command<Effect, Event>>,
+        f: F,
+    ) -> Vec<Command<Effect, ParentMsg>>
     where
-        F: FnOnce(Message) -> ParentMsg + Sync + Send + Copy + 'static,
+        F: FnOnce(Event) -> ParentMsg + Sync + Send + Copy + 'static,
     {
         commands.into_iter().map(move |c| c.map(f)).collect()
     }
 
-    fn map<ParentMsg, F>(self, f: F) -> Command<ParentMsg>
+    fn map<ParentMsg, F>(self, parent_event_constructor: F) -> Command<Effect, ParentMsg>
     where
-        F: FnOnce(Message) -> ParentMsg + Sync + Send + 'static,
+        F: FnOnce(Event) -> ParentMsg + Sync + Send + 'static,
     {
         Command {
-            body: self.body,
-            msg_constructor: match self.msg_constructor {
-                Some(g) => Some(Box::new(|b| f(g(b)))),
+            effect: self.effect,
+            event_constructor: match self.event_constructor {
+                Some(ec) => {
+                    let event = ec.call();
+                    let other_event = parent_event_constructor(event);
+                    let new_constructor = (|_| other_event).into_event_constructor(());
+
+                    Some(Box::new(new_constructor))
+                }
                 None => None,
             },
         }
@@ -200,23 +195,28 @@ impl<Message: 'static> Command<Message> {
 }
 
 /// The Crux core. Create an instance of this type with your app as the type parameter
-pub struct Core<A: App> {
+pub struct Core<Effect, A: App> {
     model: RwLock<A::Model>,
-    continuations: ContinuationStore<A::Message>,
+    continuations: ContinuationStore<A::Event>,
     app: A,
+    effect: PhantomData<Effect>,
 }
 
-impl<A: App> Default for Core<A> {
+impl<'de, Effect, A: App> Default for Core<Effect, A> {
     fn default() -> Self {
         Self {
             model: Default::default(),
             continuations: Default::default(),
             app: Default::default(),
+            effect: Default::default(),
         }
     }
 }
 
-impl<A: App> Core<A> {
+impl<'de, Effect, A: App> Core<Effect, A>
+where
+    Effect: Serialize,
+{
     /// Create an instance of the Crux core to start a Crux application, e.g.
     ///
     /// ```rust
@@ -234,19 +234,24 @@ impl<A: App> Core<A> {
     /// Receive a message from the shell.
     ///
     /// The `msg` is serialised and will be deserialised by the core.
-    pub fn message<'de>(&self, msg: &'de [u8]) -> Vec<u8>
+    pub fn message(&self, msg: &'de [u8]) -> Vec<u8>
     where
-        <A as App>::Message: Deserialize<'de>,
+        <A as App>::Event: Deserialize<'de>,
     {
-        let msg: <A as App>::Message =
-            bcs::from_bytes(msg).expect("Message deserialization failed.");
+        let msg: <A as App>::Event = bcs::from_bytes(msg).expect("Message deserialization failed.");
 
         let mut model = self.model.write().expect("Model RwLock was poisoned.");
 
-        let commands: Vec<Command<<A as App>::Message>> = self.app.update(msg, &mut model);
-        let requests: Vec<Request> = commands
+        let commands: Vec<Command<<A as App>::Effect, <A as App>::Event>> =
+            self.app.update(msg, &mut model);
+        let requests: Vec<Request<<A as App>::Effect>> = commands
             .into_iter()
-            .map(|c| self.continuations.pause(c))
+            .map(
+                |Command {
+                     effect,
+                     event_constructor,
+                 }| { self.continuations.pause(effect, event_constructor) },
+            )
             .collect();
 
         bcs::to_bytes(&requests).expect("Request serialization failed.")
@@ -257,19 +262,26 @@ impl<A: App> Core<A> {
     /// The `res` is serialised and will be deserialised by the core. The `uuid`  field of
     /// the deserialised [`Response`] MUST match the `uuid` of the [`Request`] which
     /// triggered it, else the core will panic.
-    pub fn response<'de>(&self, res: &'de [u8]) -> Vec<u8>
+    pub fn response<T>(&self, res: &'de [u8]) -> Vec<u8>
     where
-        <A as App>::Message: Deserialize<'de>,
+        <A as App>::Event: Deserialize<'de>,
+        T: Deserialize<'de>,
     {
-        let response = bcs::from_bytes(res).expect("Response deserialization failed.");
+        let response: Response<T> = bcs::from_bytes(res).expect("Response deserialization failed.");
         let msg = self.continuations.resume(response);
 
         let mut model = self.model.write().expect("Model RwLock was poisoned.");
 
-        let commands: Vec<Command<<A as App>::Message>> = self.app.update(msg, &mut model);
-        let requests: Vec<Request> = commands
+        let commands: Vec<Command<<A as App>::Effect, <A as App>::Event>> =
+            self.app.update(msg, &mut model);
+        let requests: Vec<Request<<A as App>::Effect>> = commands
             .into_iter()
-            .map(|c| self.continuations.pause(c))
+            .map(
+                |Command {
+                     effect,
+                     event_constructor,
+                 }| self.continuations.pause(effect, event_constructor),
+            )
             .collect();
 
         bcs::to_bytes(&requests).expect("Request serialization failed.")
@@ -288,46 +300,17 @@ impl<A: App> Core<A> {
 /// the `Request` with the corresponding [`Response`] to pass the data back
 /// to the [`App::update`] function wrapped in the correct `Message`.
 #[derive(Serialize, Deserialize)]
-pub struct Request {
+pub struct Request<Effect> {
     pub uuid: Vec<u8>,
-    pub body: RequestBody,
-}
-
-impl Request {
-    pub fn render() -> Self {
-        Self {
-            uuid: Default::default(),
-            body: RequestBody::Render,
-        }
-    }
-}
-
-/// Body of a side-effect [`Request`]
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum RequestBody {
-    Time,
-    Http(String),
-    Platform,
-    KVRead(String),
-    KVWrite(String, Vec<u8>),
-    Render,
+    pub effect: Effect,
 }
 
 /// Response to a side-effect request, returnig the resulting data from the Shell
 /// to the Core. The `uuid` links the [`Request`] with the corresponding `Response`
 /// to pass the data back to the [`App::update`] function wrapped in the correct `Message`.
 #[derive(Serialize, Deserialize, PartialEq, Eq, Debug)]
-pub struct Response {
+pub struct Response<Outcome> {
     pub uuid: Vec<u8>,
-    pub body: ResponseBody,
-}
-
-/// Body of a side-effect [`Response`]
-#[derive(Serialize, Deserialize, PartialEq, Eq, Debug)]
-pub enum ResponseBody {
-    Http(Vec<u8>),
-    Time(String),
-    Platform(String),
-    KVRead(Option<Vec<u8>>),
-    KVWrite(bool),
+    // #[serde(bound(deserialize = "CapabilityOutput: Deserialize<'de>"))]
+    pub outcome: Outcome,
 }
