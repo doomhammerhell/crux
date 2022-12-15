@@ -1,6 +1,6 @@
 mod shared {
     use crux_core::{capability::CapabilityContext, render::Render, App, WithContext};
-    use crux_kv::{KeyValue, KeyValueOperation, KeyValueOutput};
+    use crux_kv::{KeyValue, KeyValueOperation};
     use serde::{Deserialize, Serialize};
 
     #[derive(Default)]
@@ -10,7 +10,8 @@ mod shared {
     pub enum MyEvent {
         Write,
         Read,
-        Set(KeyValueOutput),
+        Set(Option<Vec<u8>>),
+        WriteSuccess(bool),
     }
 
     #[derive(Default, Serialize, Deserialize)]
@@ -34,15 +35,18 @@ mod shared {
         fn update(&self, event: MyEvent, model: &mut MyModel, caps: &MyCapabilities) {
             match event {
                 MyEvent::Write => {
-                    caps.key_value
-                        .write("test", 42i32.to_ne_bytes().to_vec(), MyEvent::Set);
+                    caps.key_value.write(
+                        "test",
+                        42i32.to_ne_bytes().to_vec(),
+                        MyEvent::WriteSuccess,
+                    );
                 }
-                MyEvent::Set(KeyValueOutput::Write(success)) => {
+                MyEvent::WriteSuccess(success) => {
                     model.successful = success;
                     caps.render.render()
                 }
                 MyEvent::Read => caps.key_value.read("test", MyEvent::Set),
-                MyEvent::Set(KeyValueOutput::Read(value)) => {
+                MyEvent::Set(value) => {
                     if let Some(value) = value {
                         // TODO: should KeyValueOutput::Read be generic over the value type?
                         let (int_bytes, _rest) = value.split_at(std::mem::size_of::<i32>());
