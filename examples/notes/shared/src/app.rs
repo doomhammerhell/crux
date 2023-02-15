@@ -579,25 +579,14 @@ mod editing_tests {
 
         // An edit should trigger a timer
         let update = app.update(Event::Insert("something".to_string()), &mut model);
-        let timer_effects: Vec<_> = update
-            .effects
-            .iter()
-            .filter(|e| matches!(e.as_ref(), Effect::Timer(_)))
-            .collect();
+        let timer_effects: Vec<_> = update.filter_map_effects(Effect::timer_op).collect();
 
         assert_eq!(timer_effects.len(), 1);
-
-        let first_id = match timer_effects[0].as_ref() {
-            Effect::Timer(TimerOperation::Start { id, millis }) => {
-                assert_eq!(*millis, 1000);
-
-                id
-            }
-            _ => unreachable!(),
-        };
+        let (first_id, millis) = timer_effects[0].as_ref().assert_start();
+        assert_eq!(millis, 1000);
 
         // Tells app the timer was created
-        let update = timer_effects[0].resolve(&TimerOutput::Created { id: *first_id });
+        let update = timer_effects[0].resolve(&TimerOutput::Created { id: first_id });
         for event in update.events {
             println!("Event: {event:?}");
             app.update(event, &mut model);
@@ -607,37 +596,18 @@ mod editing_tests {
         // cancel the timer and start a new one
         let update = app.update(Event::Replace(1, 2, "a".to_string()), &mut model);
 
-        let timer_effects: Vec<_> = update
-            .effects
-            .iter()
-            .filter(|e| matches!(e.as_ref(), Effect::Timer(_)))
-            .collect();
+        let timer_effects: Vec<_> = update.filter_map_effects(Effect::timer_op).collect();
 
         assert_eq!(timer_effects.len(), 2);
 
-        let cancel = timer_effects[0];
-        let start = timer_effects[1];
-
-        let cancel_id = match cancel.as_ref() {
-            Effect::Timer(TimerOperation::Cancel { id }) => id,
-            _ => unreachable!(),
-        };
+        let cancel_id = timer_effects[0].as_ref().assert_cancel();
+        let (second_id, _) = timer_effects[1].as_ref().assert_start();
 
         assert_eq!(cancel_id, first_id);
-
-        let second_id = match start.as_ref() {
-            Effect::Timer(TimerOperation::Start { id, millis }) => {
-                assert_eq!(*millis, 1000);
-
-                id
-            }
-            _ => unreachable!(),
-        };
-
         assert_ne!(first_id, second_id);
 
         // Tell app the second timer was created
-        let update = timer_effects[1].resolve(&TimerOutput::Created { id: *second_id });
+        let update = timer_effects[1].resolve(&TimerOutput::Created { id: second_id });
         for event in update.events {
             println!("Event: {event:?}");
             app.update(event, &mut model);
@@ -646,7 +616,7 @@ mod editing_tests {
         // Time passes
 
         // Fire the timer
-        let update = timer_effects[1].resolve(&TimerOutput::Finished { id: *second_id });
+        let update = timer_effects[1].resolve(&TimerOutput::Finished { id: second_id });
         for event in update.events {
             println!("Event: {event:?}");
             app.update(event, &mut model);
@@ -654,22 +624,11 @@ mod editing_tests {
 
         // One more edit. Should result in a timer, but not in cancellation
         let update = app.update(Event::Backspace, &mut model);
-        let timer_effects: Vec<_> = update
-            .effects
-            .iter()
-            .filter(|e| matches!(e.as_ref(), Effect::Timer(_)))
-            .collect();
+        let timer_effects: Vec<_> = update.filter_map_effects(Effect::timer_op).collect();
 
         assert_eq!(timer_effects.len(), 1);
 
-        let third_id = match timer_effects[0].as_ref() {
-            Effect::Timer(TimerOperation::Start { id, millis }) => {
-                assert_eq!(*millis, 1000);
-
-                id
-            }
-            _ => unreachable!(),
-        };
+        let (third_id, millis) = timer_effects[0].as_ref().assert_start();
 
         println!("Third id: {third_id}, second id: {second_id}");
 
@@ -707,6 +666,31 @@ mod editing_tests {
             unreachable!();
         }
     }
+
+    impl Effect {
+        fn timer_op(&self) -> Option<&TimerOperation> {
+            match self {
+                Effect::Timer(op) => Some(op),
+                _ => None,
+            }
+        }
+    }
+
+    impl TimerOperation {
+        fn assert_start(&self) -> (u64, usize) {
+            let TimerOperation::Start { id, millis } = self else {
+                panic!("Expected a TimerOperation::Start, got a {:?}", self);
+            };
+            (*id, *millis)
+        }
+
+        fn assert_cancel(&self) -> u64 {
+            let TimerOperation::Cancel { id } = self else {
+                panic!("Exepcted a TimerOperation::Cancel, got a {:?}", self);
+            };
+            *id
+        }
+    }
 }
 
 #[cfg(test)]
@@ -722,7 +706,7 @@ mod sync_tests {
     struct Peer {
         app: AppTester<NoteEditor, Effect>,
         model: Model,
-        subscription: Option<TestEffect<Effect, Event>>,
+        subscription: Option<TestEffect<Effect, Event, Effect>>,
         edits: VecDeque<Vec<u8>>,
     }
 

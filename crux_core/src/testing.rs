@@ -115,20 +115,60 @@ impl<Ef, Ev> AppContext<Ef, Ev> {
 #[derive(Debug)]
 pub struct Update<Ef, Ev> {
     /// Effects requested from the update run
-    pub effects: Vec<TestEffect<Ef, Ev>>,
+    pub effects: Vec<TestEffect<Ef, Ev, Ef>>,
     /// Events dispatched from the update run
     pub events: Vec<Ev>,
 }
 
-pub struct TestEffect<Ef, Ev> {
-    request: Request<Ef>,
+impl<Ef, Ev> Update<Ef, Ev> {
+    pub fn filter_effects<'a, F>(&'a self, f: F) -> impl Iterator<Item = &TestEffect<Ef, Ev, Ef>>
+    where
+        F: Fn(&Ef) -> bool + 'a,
+    {
+        self.effects.iter().filter(move |ef| f(ef.as_ref()))
+    }
+
+    pub fn filter_map_effects<'a, F, NewT>(
+        &'a self,
+        f: F,
+    ) -> impl Iterator<Item = TestEffect<Ef, Ev, NewT>> + 'a
+    where
+        F: Fn(&'a Ef) -> Option<NewT> + 'a,
+    {
+        self.effects.iter().filter_map(move |ef| {
+            Some(TestEffect {
+                context: Rc::clone(&ef.context),
+                request: Request {
+                    uuid: ef.request.uuid.clone(),
+                    effect: f(&ef.request.effect)?,
+                },
+            })
+        })
+    }
+}
+
+pub struct TestEffect<Ef, Ev, T> {
+    request: Request<T>,
     context: Rc<AppContext<Ef, Ev>>,
 }
 
-impl<Ef, Ev> TestEffect<Ef, Ev> {
-    pub fn resolve<T>(&self, result: &T) -> Update<Ef, Ev>
+impl<Ef, Ev, T> TestEffect<Ef, Ev, T> {
+    pub fn map<F, NewT>(&self, f: F) -> TestEffect<Ef, Ev, NewT>
     where
-        T: serde::ser::Serialize,
+        F: FnOnce(&T) -> NewT,
+    {
+        TestEffect {
+            context: Rc::clone(&self.context),
+            request: Request {
+                uuid: self.request.uuid.clone(),
+                effect: f(&self.request.effect),
+            },
+        }
+    }
+
+    pub fn resolve<Result>(&self, result: &Result) -> Update<Ef, Ev>
+    where
+        Result: serde::ser::Serialize,
     {
         self.context.steps.resume(
             self.request.uuid.as_slice(),
@@ -138,24 +178,24 @@ impl<Ef, Ev> TestEffect<Ef, Ev> {
     }
 }
 
-impl<Ef, Ev> AsRef<Ef> for TestEffect<Ef, Ev> {
-    fn as_ref(&self) -> &Ef {
+impl<Ef, Ev, T> AsRef<T> for TestEffect<Ef, Ev, T> {
+    fn as_ref(&self) -> &T {
         &self.request.effect
     }
 }
 
-impl<Ef, Ev> PartialEq<Ef> for TestEffect<Ef, Ev>
+impl<Ef, Ev, T> PartialEq<T> for TestEffect<Ef, Ev, T>
 where
-    Ef: PartialEq,
+    T: PartialEq,
 {
-    fn eq(&self, other: &Ef) -> bool {
+    fn eq(&self, other: &T) -> bool {
         self.request.effect == *other
     }
 }
 
-impl<Ef, Ev> fmt::Debug for TestEffect<Ef, Ev>
+impl<Ef, Ev, T> fmt::Debug for TestEffect<Ef, Ev, T>
 where
-    Ef: fmt::Debug,
+    T: fmt::Debug,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("TestEffect")
