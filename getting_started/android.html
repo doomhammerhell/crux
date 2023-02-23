@@ -1,0 +1,595 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Android — Kotlin and Jetpack Compose - Crux: Cross-platform app development in Rust</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../././mdbook-admonish.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../overview.html">Overview</a></li><li class="chapter-item expanded affix "><a href="../motivation.html">Motivation</a></li><li class="chapter-item expanded affix "><li class="part-title">Getting Started</li><li class="chapter-item expanded "><a href="../getting_started/core.html"><strong aria-hidden="true">1.</strong> Shared core and types</a></li><li class="chapter-item expanded "><a href="../getting_started/ios.html"><strong aria-hidden="true">2.</strong> iOS — Swift and SwiftUI</a></li><li class="chapter-item expanded "><a href="../getting_started/android.html" class="active"><strong aria-hidden="true">3.</strong> Android — Kotlin and Jetpack Compose</a></li><li class="chapter-item expanded "><a href="../getting_started/web_react.html"><strong aria-hidden="true">4.</strong> Web — TypeScript and React (Next.js)</a></li><li class="chapter-item expanded "><a href="../getting_started/web_yew.html"><strong aria-hidden="true">5.</strong> Web — Rust and Yew</a></li><li class="chapter-item expanded affix "><li class="part-title">Development Guide</li><li class="chapter-item expanded "><a href="../guide/hello_world.html"><strong aria-hidden="true">6.</strong> Hello world</a></li><li class="chapter-item expanded "><a href="../guide/elm_architecture.html"><strong aria-hidden="true">7.</strong> Elm Architecture</a></li><li class="chapter-item expanded "><a href="../guide/capabilities.html"><strong aria-hidden="true">8.</strong> Capabilities</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../guide/capability_apis.html"><strong aria-hidden="true">8.1.</strong> Capability APIs</a></li></ol></li><li class="chapter-item expanded "><a href="../guide/message_interface.html"><strong aria-hidden="true">9.</strong> Message interface between core and shell</a></li><li class="chapter-item expanded "><a href="../guide/composing.html"><strong aria-hidden="true">10.</strong> Composable Applications</a></li><li class="chapter-item expanded affix "><li class="part-title">Internals</li><li class="chapter-item expanded "><a href="../internals/uniffi.html"><strong aria-hidden="true">11.</strong> FFI interface</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../internals/core_api.html"><strong aria-hidden="true">11.1.</strong> Core API</a></li><li class="chapter-item expanded "><a href="../internals/typegen.html"><strong aria-hidden="true">11.2.</strong> Type generation</a></li></ol></li><li class="chapter-item expanded "><a href="../internals/serialization.html"><strong aria-hidden="true">12.</strong> Serialization</a></li><li class="chapter-item expanded "><a href="../internals/continuations.html"><strong aria-hidden="true">13.</strong> Continuations</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Crux: Cross-platform app development in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/redbadger/crux/" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/redbadger/crux/edit/master/docs/src/getting_started/android.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="android--kotlin-and-jetpack-compose"><a class="header" href="#android--kotlin-and-jetpack-compose">Android — Kotlin and Jetpack Compose</a></h1>
+<p>These are the steps to set up Android Studio to build and run a simple Android app that calls into a shared core.</p>
+<div id="admonition-note" class="admonition note">
+<div class="admonition-title">
+<p>Note</p>
+<p><a class="admonition-anchor-link" href="#admonition-note"></a></p>
+</div>
+<div>
+<p>This walk-through assumes you have already added the <code>shared</code> and <code>shared_types</code> libraries to your repo, as described in <a href="./core.html">Shared core and types</a>.</p>
+</div>
+</div>
+<div id="admonition-sharp-edge" class="admonition warning">
+<div class="admonition-title">
+<p>Sharp edge</p>
+<p><a class="admonition-anchor-link" href="#admonition-sharp-edge"></a></p>
+</div>
+<div>
+<p>We want to make setting up Android Studio to work with Crux really easy. As time progresses we will try to simplify and automate as much as possible, but at the moment there is some manual configuration to do. This only needs doing once, so we hope it's not too much trouble. If you know of any better ways than those we describe below, please either raise an issue (or a PR) at <a href="https://github.com/redbadger/crux">https://github.com/redbadger/crux</a>.</p>
+</div>
+</div>
+<h2 id="create-an-android-app"><a class="header" href="#create-an-android-app">Create an Android App</a></h2>
+<p>The first thing we need to do is create a new Android app in Android Studio.</p>
+<p>Open Android Studio and create a new project, for &quot;Phone and Tablet&quot;, of type &quot;Empty Compose Activity (Material3)&quot;. In this walk-through, we'll call it &quot;Android&quot; (and use a minimum SDK of API 33).</p>
+<p>If you choose to create the app in the root folder then your repo's directory structure might now look something like this (some files elided):</p>
+<pre><code class="language-txt">.
+├── Android
+│  ├── app
+│  │  ├── build.gradle
+│  │  ├── libs
+│  │  └── src
+│  │     └── main
+│  │        ├── AndroidManifest.xml
+│  │        └── java
+│  │           └── com
+│  │              └── example
+│  │                 └── android
+│  │                    └── MainActivity.kt
+│  ├── build.gradle
+│  ├── gradle.properties
+│  ├── local.properties
+│  └── settings.gradle
+├── Cargo.lock
+├── Cargo.toml
+├── shared
+│  ├── build.rs
+│  ├── Cargo.toml
+│  ├── src
+│  │  ├── hello_world.rs
+│  │  ├── lib.rs
+│  │  └── shared.udl
+│  └── uniffi.toml
+├── shared_types
+│  ├── build.rs
+│  ├── Cargo.toml
+│  └── src
+│     └── lib.rs
+└── target
+</code></pre>
+<h2 id="add-a-kotlin-android-library"><a class="header" href="#add-a-kotlin-android-library">Add a Kotlin Android Library</a></h2>
+<p>This shared Android library (<code>aar</code>) is going to wrap our shared Rust library.</p>
+<p>Under <code>File -&gt; New -&gt; New Module</code>, choose &quot;Android Library&quot; and call it something like <code>shared</code>. Set the &quot;Package name&quot; to match the one from your <code>/shared/uniffi.toml</code>, e.g. <code>com.example.counter.shared</code>.</p>
+<p>For more information on how to add an Android library see <a href="https://developer.android.com/studio/projects/android-library">https://developer.android.com/studio/projects/android-library</a>.</p>
+<p>We can now add this library as a <em>dependency</em> of our app.</p>
+<div id="admonition-tip" class="admonition tip">
+<div class="admonition-title">
+<p>Tip</p>
+<p><a class="admonition-anchor-link" href="#admonition-tip"></a></p>
+</div>
+<div>
+<p>Don't just copy and paste the groovy snippets on this page — instead, ensure that each section has (at least) the contents shown.</p>
+</div>
+</div>
+<p>Merge the following into the <strong>app</strong>'s <code>build.gradle</code> (<code>/Android/app/build.gradle</code>).</p>
+<pre><code class="language-groovy">android {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            freeCompilerArgs += &quot;-Xopt-in=kotlin.RequiresOptIn&quot;
+        }
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            // this prevents an error with duplicate META-INF/DEPENDENCIES
+            excludes += '/META-INF/DEPENDENCIES'
+        }
+    }
+}
+
+dependencies {
+    // our shared library
+    implementation project(path: ':shared')
+
+    def composeBom = platform('androidx.compose:compose-bom:2022.10.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    implementation(&quot;androidx.compose.material3:material3&quot;)
+
+    // Android Studio Preview support
+    implementation(&quot;androidx.compose.ui:ui-tooling-preview&quot;)
+    debugImplementation(&quot;androidx.compose.ui:ui-tooling&quot;)
+
+    // UI Tests
+    androidTestImplementation(&quot;androidx.compose.ui:ui-test-junit4&quot;)
+    debugImplementation(&quot;androidx.compose.ui:ui-test-manifest&quot;)
+
+    // Optional - Integration with activities
+    implementation(&quot;androidx.activity:activity-compose:1.6.1&quot;)
+    // Optional - Integration with ViewModels
+    implementation(&quot;androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1&quot;)
+    // Optional - Integration with LiveData
+    implementation(&quot;androidx.compose.runtime:runtime-livedata&quot;)
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+
+    implementation('com.diem:client-sdk-java:1.0.5') {
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15to18'
+    }
+}
+</code></pre>
+<h2 id="the-rust-shared-library"><a class="header" href="#the-rust-shared-library">The Rust shared library</a></h2>
+<p>We'll use the following tools to incorporate our Rust shared library into the Android library added above. This includes compiling and linking the Rust dynamic library and generating the runtime bindings and the shared types (including copying them into our project).</p>
+<ul>
+<li>The <a href="https://developer.android.com/ndk">Android NDK</a></li>
+<li>Mozilla's <a href="https://github.com/mozilla/rust-android-gradle">Rust gradle plugin</a> for Android</li>
+<li><a href="https://github.com/java-native-access/jna">Java Native Access</a></li>
+<li><a href="https://mozilla.github.io/uniffi-rs/">Uniffi</a> to generate Java bindings</li>
+<li><code>com.novi.serde</code>, which is part of the <a href="https://javadoc.io/doc/com.diem/client-sdk-java/latest/index.html">diem client SDK</a>, which we'll need for serialization</li>
+</ul>
+<p>Let's get started.</p>
+<div id="admonition-tip-1" class="admonition tip">
+<div class="admonition-title">
+<p>Tip</p>
+<p><a class="admonition-anchor-link" href="#admonition-tip-1"></a></p>
+</div>
+<div>
+<p>Don't just copy and paste the groovy snippets on this page — instead, ensure that each section has (at least) the contents shown.</p>
+</div>
+</div>
+<p>Merge the following into the <strong>project</strong>'s <code>build.gradle</code> (<code>/Android/build.gradle</code>).</p>
+<pre><code class="language-groovy">buildscript {
+    ext {
+        compose_version = '1.3.3'
+    }
+}
+
+plugins {
+    id &quot;org.mozilla.rust-android-gradle.rust-android&quot; version &quot;0.9.3&quot;
+}
+</code></pre>
+<p>Merge the following into the <strong>library</strong>'s <code>build.gradle</code> (<code>/Android/shared/build.gradle</code>).</p>
+<pre><code class="language-groovy">plugins {
+    id 'org.mozilla.rust-android-gradle.rust-android'
+}
+android {
+    ndkVersion &quot;25.1.8937393&quot;
+}
+
+dependencies {
+    implementation &quot;net.java.dev.jna:jna:5.12.1@aar&quot;
+
+    // for com.novi.serde
+    implementation('com.diem:client-sdk-java:1.0.5') {
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15to18'
+    }
+}
+
+apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
+
+cargo {
+   module  = &quot;../..&quot;
+   libname = &quot;shared&quot;
+   targets = [&quot;arm64&quot;]
+   extraCargoBuildArguments = ['--package', 'shared']
+}
+
+afterEvaluate {
+   // The `cargoBuild` task isn't available until after evaluation.
+   android.libraryVariants.all { variant -&gt;
+      def productFlavor = &quot;&quot;
+      variant.productFlavors.each {
+            productFlavor += &quot;${it.name.capitalize()}&quot;
+      }
+      def buildType = &quot;${variant.buildType.name.capitalize()}&quot;
+      tasks[&quot;cargoBuild&quot;].dependsOn(tasks[&quot;bindGen&quot;])
+      tasks[&quot;typesGen&quot;].dependsOn(tasks[&quot;cargoBuild&quot;])
+      tasks[&quot;generate${productFlavor}${buildType}Assets&quot;].dependsOn(tasks[&quot;typesGen&quot;], tasks[&quot;cargoBuild&quot;])
+   }
+}
+
+task bindGen(type: Exec) {
+    def outDir = &quot;${projectDir}/src/main/java&quot;
+    workingDir &quot;../../&quot;
+    commandLine(
+            &quot;sh&quot;, &quot;-c&quot;,
+            &quot;&quot;&quot;\
+            target/debug/uniffi-bindgen generate shared/src/shared.udl \
+            --language kotlin \
+            --out-dir $outDir
+            &quot;&quot;&quot;
+    )
+}
+
+task typesGen(type: Exec) {
+   def outDir = &quot;${projectDir}/src/main/java&quot;
+   def srcDir = &quot;shared_types/generated/java/com&quot;
+   workingDir &quot;../../&quot;
+   commandLine(
+            &quot;sh&quot;, &quot;-c&quot;,
+            &quot;&quot;&quot;\
+            cp -r $srcDir $outDir
+            &quot;&quot;&quot;
+   )
+}
+
+</code></pre>
+<div id="admonition-tip-2" class="admonition tip">
+<div class="admonition-title">
+<p>Tip</p>
+<p><a class="admonition-anchor-link" href="#admonition-tip-2"></a></p>
+</div>
+<div>
+<p>When you have edited the gradle files, don't forget to click &quot;sync now&quot;.</p>
+</div>
+</div>
+<p>If you now build your project you should see the shared library object file, and the shared types, in the right places.</p>
+<pre><code class="language-sh">$ ls --tree Android/shared/build/rustJniLibs
+Android/shared/build/rustJniLibs
+└── android
+   └── arm64-v8a
+      └── libshared.so
+
+$ ls --tree Android/shared/src/main/java/com/example/counter
+Android/shared/src/main/java/com/example/counter
+├── shared
+│  └── shared.kt
+└── shared_types
+   ├── Effect.java
+   ├── Event.java
+   ├── RenderOperation.java
+   ├── Request.java
+   ├── Requests.java
+   ├── TraitHelpers.java
+   └── ViewModel.java
+</code></pre>
+<h2 id="create-some-ui-and-run-in-the-simulator"><a class="header" href="#create-some-ui-and-run-in-the-simulator">Create some UI and run in the Simulator</a></h2>
+<h3 id="hello-world-counter-example"><a class="header" href="#hello-world-counter-example">Hello World counter example</a></h3>
+<div id="admonition-example" class="admonition example">
+<div class="admonition-title">
+<p>Example</p>
+<p><a class="admonition-anchor-link" href="#admonition-example"></a></p>
+</div>
+<div>
+<p>There are several <a href="https://github.com/redbadger/crux/tree/master/examples">examples</a> of Android apps in the Crux repository.</p>
+<p>However, the simplest example is the <a href="https://github.com/redbadger/crux/tree/master/examples/hello_world">Hello World counter example</a> — it only has <code>shared</code> and <code>shared_types</code> libraries, which will work with the following example code.</p>
+</div>
+</div>
+<p>Edit <code>/Android/app/src/main/java/com/example/android/MainActivity.kt</code> to look like this:</p>
+<pre><code class="language-kotlin">@file:OptIn(ExperimentalUnsignedTypes::class)
+package com.example.android
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.android.ui.theme.AndroidTheme
+import com.example.counter.shared.message
+import com.example.counter.shared.view
+import com.example.counter.shared_types.Effect
+import com.example.counter.shared_types.Event
+import com.example.counter.shared_types.Requests
+import com.example.counter.shared_types.Request as Req
+import com.example.counter.shared_types.ViewModel as MyViewModel
+
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            AndroidTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    View()
+                }
+            }
+        }
+    }
+}
+
+sealed class CoreMessage {
+    data class Message(val event: Event) : CoreMessage()
+}
+
+class Model : ViewModel() {
+    var view: MyViewModel by mutableStateOf(MyViewModel(&quot;&quot;))
+        private set
+
+    init {
+        update(CoreMessage.Message(Event.Reset()))
+    }
+
+    fun update(msg: CoreMessage) {
+        val requests: List&lt;Req&gt; =
+            when (msg) {
+                is CoreMessage.Message -&gt; {
+                    Requests.bcsDeserialize(
+                        message(msg.event.bcsSerialize().toUByteArray().toList()).toUByteArray()
+                            .toByteArray()
+                    )
+                }
+            }
+
+        for (req in requests) when (req.effect) {
+            is Effect.Render -&gt; {
+                this.view = MyViewModel.bcsDeserialize(view().toUByteArray().toByteArray())
+            }
+        }
+    }
+}
+
+@Composable
+fun View(model: Model = viewModel()) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
+    ) {
+        Text(text = model.view.count.toString(), modifier = Modifier.padding(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Button(
+                onClick = { model.update(CoreMessage.Message(Event.Reset())) },
+                colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) { Text(text = &quot;Reset&quot;, color = Color.White) }
+            Button(
+                onClick = { model.update(CoreMessage.Message(Event.Increment())) },
+                colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) { Text(text = &quot;Increment&quot;, color = Color.White) }
+            Button(
+                onClick = { model.update(CoreMessage.Message(Event.Decrement())) },
+                colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) { Text(text = &quot;Decrement&quot;, color = Color.White) }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    AndroidTheme {
+        View()
+    }
+}
+</code></pre>
+<div id="admonition-success" class="admonition success">
+<div class="admonition-title">
+<p>Success</p>
+<p><a class="admonition-anchor-link" href="#admonition-success"></a></p>
+</div>
+<div>
+<p>You should then be able to run the app in the simulator, and it should look like this:</p>
+<p align="center"><img alt="hello world app" src="./hello_world_android.webp"  width="300"></p>
+</div>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../getting_started/ios.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="../getting_started/web_react.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../getting_started/ios.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../getting_started/web_react.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

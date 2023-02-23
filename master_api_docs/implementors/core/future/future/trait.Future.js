@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"crux_core":[["impl&lt;T&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.67.1/core/future/future/trait.Future.html\" title=\"trait core::future::future::Future\">Future</a> for <a class=\"struct\" href=\"crux_core/struct.ShellRequest.html\" title=\"struct crux_core::ShellRequest\">ShellRequest</a>&lt;T&gt;"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

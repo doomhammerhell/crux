@@ -1,0 +1,356 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Web — Rust and Yew - Crux: Cross-platform app development in Rust</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../././mdbook-admonish.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../overview.html">Overview</a></li><li class="chapter-item expanded affix "><a href="../motivation.html">Motivation</a></li><li class="chapter-item expanded affix "><li class="part-title">Getting Started</li><li class="chapter-item expanded "><a href="../getting_started/core.html"><strong aria-hidden="true">1.</strong> Shared core and types</a></li><li class="chapter-item expanded "><a href="../getting_started/ios.html"><strong aria-hidden="true">2.</strong> iOS — Swift and SwiftUI</a></li><li class="chapter-item expanded "><a href="../getting_started/android.html"><strong aria-hidden="true">3.</strong> Android — Kotlin and Jetpack Compose</a></li><li class="chapter-item expanded "><a href="../getting_started/web_react.html"><strong aria-hidden="true">4.</strong> Web — TypeScript and React (Next.js)</a></li><li class="chapter-item expanded "><a href="../getting_started/web_yew.html" class="active"><strong aria-hidden="true">5.</strong> Web — Rust and Yew</a></li><li class="chapter-item expanded affix "><li class="part-title">Development Guide</li><li class="chapter-item expanded "><a href="../guide/hello_world.html"><strong aria-hidden="true">6.</strong> Hello world</a></li><li class="chapter-item expanded "><a href="../guide/elm_architecture.html"><strong aria-hidden="true">7.</strong> Elm Architecture</a></li><li class="chapter-item expanded "><a href="../guide/capabilities.html"><strong aria-hidden="true">8.</strong> Capabilities</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../guide/capability_apis.html"><strong aria-hidden="true">8.1.</strong> Capability APIs</a></li></ol></li><li class="chapter-item expanded "><a href="../guide/message_interface.html"><strong aria-hidden="true">9.</strong> Message interface between core and shell</a></li><li class="chapter-item expanded "><a href="../guide/composing.html"><strong aria-hidden="true">10.</strong> Composable Applications</a></li><li class="chapter-item expanded affix "><li class="part-title">Internals</li><li class="chapter-item expanded "><a href="../internals/uniffi.html"><strong aria-hidden="true">11.</strong> FFI interface</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../internals/core_api.html"><strong aria-hidden="true">11.1.</strong> Core API</a></li><li class="chapter-item expanded "><a href="../internals/typegen.html"><strong aria-hidden="true">11.2.</strong> Type generation</a></li></ol></li><li class="chapter-item expanded "><a href="../internals/serialization.html"><strong aria-hidden="true">12.</strong> Serialization</a></li><li class="chapter-item expanded "><a href="../internals/continuations.html"><strong aria-hidden="true">13.</strong> Continuations</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Crux: Cross-platform app development in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/redbadger/crux/" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                        <a href="https://github.com/redbadger/crux/edit/master/docs/src/getting_started/web_yew.md" title="Suggest an edit" aria-label="Suggest an edit">
+                            <i id="git-edit-button" class="fa fa-edit"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="web--rust-and-yew"><a class="header" href="#web--rust-and-yew">Web — Rust and Yew</a></h1>
+<p>These are the steps to set up and run a simple Rust Web app that calls into a shared core.</p>
+<div id="admonition-note" class="admonition note">
+<div class="admonition-title">
+<p>Note</p>
+<p><a class="admonition-anchor-link" href="#admonition-note"></a></p>
+</div>
+<div>
+<p>This walk-through assumes you have already added the <code>shared</code> and <code>shared_types</code> libraries to your repo, as described in <a href="./core.html">Shared core and types</a>.</p>
+</div>
+</div>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="#admonition-info"></a></p>
+</div>
+<div>
+<p>There are many frameworks available for writing Web applications in Rust. We've chosen <a href="https://yew.rs/">Yew</a> for this walk-through because it is arguably the most mature. However, a similar setup would work for any framework that compiles to WebAssembly.</p>
+</div>
+</div>
+<h2 id="create-a-yew-app"><a class="header" href="#create-a-yew-app">Create a Yew App</a></h2>
+<p>Our Yew app is just a new Rust project, which we can create with Cargo. For this example we'll call it <code>web-yew</code>.</p>
+<pre><code class="language-sh">cargo new web-yew
+</code></pre>
+<p>We'll also want to add this new project to our Cargo workspace, by editing the root <code>Cargo.toml</code> file.</p>
+<pre><code class="language-toml">[workspace]
+members = [&quot;shared&quot;, &quot;web-yew&quot;]
+</code></pre>
+<p>Now we can <code>cd</code> into the <code>web-yew</code> directory and start fleshing out our project. Let's add some dependencies to <code>shared/Cargo.toml</code>.</p>
+<pre><code class="language-toml">[package]
+name = &quot;web-yew&quot;
+version = &quot;0.1.0&quot;
+edition = &quot;2021&quot;
+
+[dependencies]
+bcs = &quot;0.1.4&quot;
+shared = { path = &quot;../shared&quot; }
+yew = { version = &quot;0.20.0&quot;, features = [&quot;csr&quot;] }
+</code></pre>
+<p>We'll also need a file called <code>index.html</code>, to serve our app.</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
+    &lt;title&gt;Yew App&lt;/title&gt;
+    &lt;link
+      rel=&quot;stylesheet&quot;
+      href=&quot;https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css&quot;
+    /&gt;
+  &lt;/head&gt;
+&lt;/html&gt;
+</code></pre>
+<h2 id="create-some-ui"><a class="header" href="#create-some-ui">Create some UI</a></h2>
+<h3 id="hello-world-counter-example"><a class="header" href="#hello-world-counter-example">Hello World counter example</a></h3>
+<div id="admonition-example" class="admonition example">
+<div class="admonition-title">
+<p>Example</p>
+<p><a class="admonition-anchor-link" href="#admonition-example"></a></p>
+</div>
+<div>
+<p>There are several <a href="https://github.com/redbadger/crux/tree/master/examples">examples</a> of Yew apps in the Crux repository.</p>
+<p>However, the simplest example is the <a href="https://github.com/redbadger/crux/tree/master/examples/hello_world">Hello World counter example</a> — it only has <code>shared</code> and <code>shared_types</code> libraries, which will work with the following example code.</p>
+</div>
+</div>
+<p>Edit <code>src/main.rs</code> to look like this:</p>
+<pre><code class="language-rust noplayground">use bcs::{from_bytes, to_bytes};
+use yew::prelude::*;
+
+use shared::{Effect, Event, Request, ViewModel};
+
+#[derive(Default)]
+struct RootComponent;
+
+enum CoreMessage {
+    Event(Event),
+}
+
+impl Component for RootComponent {
+    type Message = CoreMessage;
+    type Properties = ();
+
+    fn create(_ctx: &amp;Context&lt;Self&gt;) -&gt; Self {
+        Self::default()
+    }
+
+    fn update(&amp;mut self, _ctx: &amp;Context&lt;Self&gt;, msg: Self::Message) -&gt; bool {
+        let reqs = match msg {
+            CoreMessage::Event(event) =&gt; shared::process_event(&amp;to_bytes(&amp;event).unwrap()),
+        };
+
+        let reqs: Vec&lt;Request&lt;Effect&gt;&gt; = from_bytes(&amp;reqs).unwrap();
+
+        let mut should_render = false;
+
+        for Request { uuid: _, effect } in reqs {
+            match effect {
+                Effect::Render(_) =&gt; should_render = true,
+            }
+        }
+
+        should_render
+    }
+
+    fn view(&amp;self, ctx: &amp;Context&lt;Self&gt;) -&gt; Html {
+        let link = ctx.link();
+        let view = shared::view();
+        let view: ViewModel = from_bytes(&amp;view).unwrap();
+
+        html! {
+            &lt;&gt;
+                &lt;section class=&quot;box container has-text-centered m-5&quot;&gt;
+                    &lt;p class=&quot;is-size-5&quot;&gt;{&amp;view.count}&lt;/p&gt;
+                    &lt;div class=&quot;buttons section is-centered&quot;&gt;
+                        &lt;button class=&quot;button is-primary is-danger&quot;
+                            onclick={link.callback(|_| CoreMessage::Event(Event::Reset))}&gt;
+                            {&quot;Reset&quot;}
+                        &lt;/button&gt;
+                        &lt;button class=&quot;button is-primary is-success&quot;
+                            onclick={link.callback(|_| CoreMessage::Event(Event::Increment))}&gt;
+                            {&quot;Increment&quot;}
+                        &lt;/button&gt;
+                        &lt;button class=&quot;button is-primary is-warning&quot;
+                            onclick={link.callback(|_| CoreMessage::Event(Event::Decrement))}&gt;
+                            {&quot;Decrement&quot;}
+                        &lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/section&gt;
+            &lt;/&gt;
+        }
+    }
+}
+
+fn main() {
+    yew::Renderer::&lt;RootComponent&gt;::new().render();
+}</code></pre>
+<h2 id="build-and-serve-our-app"><a class="header" href="#build-and-serve-our-app">Build and serve our app</a></h2>
+<p>The easiest way to compile the app to WebAssembly and serve it in our web page is to use <a href="https://trunkrs.dev/"><code>trunk</code></a>, which we can install with <a href="https://brew.sh/">Homebrew</a> (<code>brew install trunk</code>) or Cargo (<code>cargo install trunk</code>).</p>
+<p>We can build our app, serve it and open it in our browser, in one simple step.</p>
+<pre><code class="language-sh">trunk serve --open
+</code></pre>
+<div id="admonition-success" class="admonition success">
+<div class="admonition-title">
+<p>Success</p>
+<p><a class="admonition-anchor-link" href="#admonition-success"></a></p>
+</div>
+<div>
+<p>Your app should look like this:</p>
+<p align="center"><img alt="hello world app" src="./hello_world_yew.webp"  width="300"></p>
+</div>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../getting_started/web_react.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="../guide/hello_world.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../getting_started/web_react.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../guide/hello_world.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

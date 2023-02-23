@@ -1,0 +1,2610 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Crux: Cross-platform app development in Rust</title>
+        <meta name="robots" content="noindex" />
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="././mdbook-admonish.css">
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="overview.html">Overview</a></li><li class="chapter-item expanded affix "><a href="motivation.html">Motivation</a></li><li class="chapter-item expanded affix "><li class="part-title">Getting Started</li><li class="chapter-item expanded "><a href="getting_started/core.html"><strong aria-hidden="true">1.</strong> Shared core and types</a></li><li class="chapter-item expanded "><a href="getting_started/ios.html"><strong aria-hidden="true">2.</strong> iOS — Swift and SwiftUI</a></li><li class="chapter-item expanded "><a href="getting_started/android.html"><strong aria-hidden="true">3.</strong> Android — Kotlin and Jetpack Compose</a></li><li class="chapter-item expanded "><a href="getting_started/web_react.html"><strong aria-hidden="true">4.</strong> Web — TypeScript and React (Next.js)</a></li><li class="chapter-item expanded "><a href="getting_started/web_yew.html"><strong aria-hidden="true">5.</strong> Web — Rust and Yew</a></li><li class="chapter-item expanded affix "><li class="part-title">Development Guide</li><li class="chapter-item expanded "><a href="guide/hello_world.html"><strong aria-hidden="true">6.</strong> Hello world</a></li><li class="chapter-item expanded "><a href="guide/elm_architecture.html"><strong aria-hidden="true">7.</strong> Elm Architecture</a></li><li class="chapter-item expanded "><a href="guide/capabilities.html"><strong aria-hidden="true">8.</strong> Capabilities</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="guide/capability_apis.html"><strong aria-hidden="true">8.1.</strong> Capability APIs</a></li></ol></li><li class="chapter-item expanded "><a href="guide/message_interface.html"><strong aria-hidden="true">9.</strong> Message interface between core and shell</a></li><li class="chapter-item expanded "><a href="guide/composing.html"><strong aria-hidden="true">10.</strong> Composable Applications</a></li><li class="chapter-item expanded affix "><li class="part-title">Internals</li><li class="chapter-item expanded "><a href="internals/uniffi.html"><strong aria-hidden="true">11.</strong> FFI interface</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="internals/core_api.html"><strong aria-hidden="true">11.1.</strong> Core API</a></li><li class="chapter-item expanded "><a href="internals/typegen.html"><strong aria-hidden="true">11.2.</strong> Type generation</a></li></ol></li><li class="chapter-item expanded "><a href="internals/serialization.html"><strong aria-hidden="true">12.</strong> Serialization</a></li><li class="chapter-item expanded "><a href="internals/continuations.html"><strong aria-hidden="true">13.</strong> Continuations</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Crux: Cross-platform app development in Rust</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/redbadger/crux/" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>Crux is an <strong>experimental</strong> approach to building cross-platform applications with better testability, higher code and behaviour reuse, better safety, security, and more joy from better tools.</p>
+<p>It splits the application into two distinct parts, a Core built in Rust, which drives as much of the business logic as possible, and a Shell, built in the platform native language (Swift, Kotlin, TypeScript), which provides all interfaces with the external world, including the human user, and acts as a platform on which the core runs.</p>
+<p><img src="./crux.png" alt="Crux" /></p>
+<p>The interface between the two is a native FFI (Foreign Function Interface) with cross-language type checking and message passing semantics, where simple data structures are passed across the boundary.</p>
+<div id="admonition-get-to-know-crux" class="admonition note">
+<div class="admonition-title">
+<p>Get to know Crux</p>
+<p><a class="admonition-anchor-link" href="overview.html#admonition-get-to-know-crux"></a></p>
+</div>
+<div>
+<p>To get playing with Crux quickly, follow the <a href="./getting_started/core.html">Getting Started</a> steps. If you prefer to read more about how apps are built in Crux first, read the <a href="./guide/hello_world.html">Development Guide</a>. And if you'd like to know what possessed us to try this in the first place, read about our <a href="./motivation.html">Motivation</a>.</p>
+<p>There are two places to find API documentation: the latest published version on docs.rs, and we also have the very latest master docs if you too like to live dangerously.</p>
+<ul>
+<li><strong>crux_core</strong> - the main Crux crate: <a href="https://docs.rs/crux_core/latest/crux_core/">latest release</a> | <a href="https://redbadger.github.io/crux/master_api_docs/crux_core/">latest master</a></li>
+<li><strong>crux_http</strong> - HTTP client capability: <a href="https://docs.rs/crux_http/latest/crux_http/">latest release</a> | <a href="https://redbadger.github.io/crux/master_api_docs/crux_http/">latest master</a></li>
+</ul>
+<p>Crux is open source on <a href="https://github.com/redbadger/crux">Github</a>. A good way to learn Crux is to explore the code, play with the <a href="https://github.com/redbadger/crux/tree/master/examples">examples</a>, and raise issues or pull requests. We'd love you to get involved.</p>
+</div>
+</div>
+<h2 id="design-overview"><a class="header" href="#design-overview">Design overview</a></h2>
+<p><img src="./architecture.svg" alt="Logical architecture" /></p>
+<p>The architecture is event-driven, based on <a href="https://martinfowler.com/eaaDev/EventSourcing.html">event sourcing</a>. The Core holds the majority of state, which is updated in response to events happening in the Shell. The interface between the Core and the Shell is messaged based.</p>
+<p>The user interface layer is built natively, with modern declarative UI frameworks such as Swift UI, Jetpack Compose and React/Vue or a WASM based framework on the web. The UI layer is as thin as it can be, and all other application logic is performed by the shared Core. The one restriction is that the Core is side–effect free. This is both a technical requirement (to be able to target WebAssembly), and an intentional design goal, to separate logic from effects and make them both easier to test in isolation.</p>
+<p>The core requests side-effects from the Shell through common <a href="./guide/capabilities.html">capabilities</a>. The basic concept is that instead of <em>doing</em> the asynchronous work, the core <em>describes</em> the intent for the work with data, and passes this to the Shell to be performed. The Shell performs the work, and returns the outcomes back to the Core. This approach is inspired by <a href="https://elm-lang.org/">Elm</a>, and similar to how other purely functional languages deal with effects and I/O (e.g. the IO monad in Haskell). It is also similar to how iterators work in Rust.</p>
+<p>The Core exports types for the messages it can understand. The Shell can call the Core and pass one of the messages. In return, it receives a set of side-effect requests to perform. When the work is completed, the Shell sends the result back into the Core, which responds with further requests if necessary.</p>
+<p>Updating the user interface is considered one of the side-effects the Core can request. The entire interface is strongly typed and breaking changes in the core will result in build failures in the Shell.</p>
+<h2 id="goals"><a class="header" href="#goals">Goals</a></h2>
+<p>We set out to prove this architecture to find a better way of building apps across platforms. You can read more <a href="./motivation.html">about our motivation</a>. The overall goals of Crux are to:</p>
+<ul>
+<li>Build the majority of the application code once, in Rust</li>
+<li>Follow the <a href="https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/">Onion Architecture</a> to get all its benefits</li>
+<li>Encapsulate the <em>behaviour</em> of the app in the Core for reuse</li>
+<li>Separate the behaviour from the look and feel and interaction design</li>
+<li>Push side-effects to the edge, to make the behaviour of the Core easy to test</li>
+<li>Use the native UI tool kits to create user experience that is the best fit for a given platform</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="motivation"><a class="header" href="#motivation">Motivation</a></h1>
+<p>We set out to prove this approach to building apps largely because we've seen the drawbacks of all the other approaches in real life, and thought &quot;there must be a better way&quot;. The two major available approaches to building the same application for iOS and Android are:</p>
+<ol>
+<li>Build a native app for each platform, effectively doing the work twice.</li>
+<li>Use React Native or Flutter to build the application once<sup class="footnote-reference"><a href="#once">1</a></sup> and produce native looking and feeling apps which behave nearly identically.</li>
+</ol>
+<p>The drawback of the first approach is doing the work twice. In order to build every feature for iOS and Android at the same time, you need twice the number of people, either people who happily do Swift and Kotlin (and they are very rare), or more likely a set of iOS engineers and another set of Android engineers. This typically leads to forming two separate, platform-focused teams. We have witnessed situations first-hand, where those teams struggle with the same design problems, and despite one encountering and solving the problem first, the other one can learn nothing from their experience (and that's <em>despite</em> long design discussions).</p>
+<p>We think such experience with the platform native approach are common, and the reason why people look to React Native and Flutter. The issues with React Native are two fold</p>
+<ul>
+<li>Only <em>mostly</em> native user interface</li>
+<li>In the case of React Native, the JavaScript ecosystem tooling disaster</li>
+</ul>
+<p>React Native effectively takes over, and works hard to insulate the engineer from the native platform underneath and pretend it doesn't really exist, but of course, inevitably, it does and the user interface ends up being built in a combination of 90% JavaScript/TypeScript and 10% Kotlin/Swift. This was still a major win when React Native was first introduced, because the platform native UI toolkits were imperative, following a version of MVC architecture, and generally made it quite difficult to get UI state management right. React on the other hand is declarative, leaving much less space for errors stemming from the UI getting into an undefined state. This benefit was clearly recognised by iOS and Android, and both introduced their own declarative UI toolkit - Swift UI and Jetpack Compose. Both of them are quite good, matching that particular advantage of React Native, and leaving only building things once (in theory). But in exchange, the have to be written in JavaScript (and adjacent tools and languages).</p>
+<p>The main issue with the JavaScript ecosystem is that it's built on sand. The underlying language is quite loose and has a <a href="https://www.destroyallsoftware.com/talks/wat">lot of inconsistencies</a>. It came with no package manager originally, now <a href="https://www.npmjs.com/">it</a> <a href="https://yarnpkg.com/">has</a> <a href="https://pnpm.io/">three</a>. To serve code to the browser, it gets bundled, and the list of bundlers is too long to include here. <a href="https://webpack.js.org/">Webpack</a>, the most popular one is famously difficult to configure. JavaScript was built as a dynamic language which leads to a lot of basic human errors, which are made while writing the code, only being discovered when running the code. Static type systems aim to solve that problem and <a href="https://www.typescriptlang.org/">TypeScript</a> adds this onto JavaScript, but the types only go so far (until they hit an <code>any</code> type, or dependencies with no type definitions), and they disappear at runtime. </p>
+<p>In short, upgrading JavaScript to something modern takes a lot of tooling. Getting all this tooling set up and ready to build things is an all day job, and so more tooling, like <a href="https://nextjs.org/">Next.js</a> has popped up providing this configuration in a box, batteries included. Perhaps the final admission of this problem is the recent <a href="https://rome.tools/">Rome tools</a> project, attempting to bring all the various tools under one roof (and Rome itself is built in Rust...).</p>
+<p>It's no wonder that even a working setup of all the tooling has sharp edges, and cannot afford to be nearly as strict as tooling designed with strictness in mind, such as Rust's. The heart of the problem is that computers are strict and precise instruments, and humans are sloppy creatures. With enough humans (more than 10, being generous) and no additional help, the resulting code will be sloppy, full of unhandled edge cases, undefined behaviour being relied on, circular dependencies preventing testing in isolation, etc. (and yes, these are not hypotheticals).</p>
+<p>Contrast that with Rust, which is as strict as it gets, and generally backs up the claim that if it compiles it will work (and if you struggle to get it past the compiler, it's probably a bad idea). The tooling and package management is built in with <code>cargo</code>. There are fewer decisions to make when setting up a Rust project.</p>
+<p>In short, we think the JS ecosystem has jumped the shark, the complexity toothpaste is out of the tube, and it's time to stop. But there's no real viable alternative. Crux is our attempt to provide one.</p>
+<hr />
+<div class="footnote-definition" id="once"><sup class="footnote-definition-label">1</sup>
+<p>In reality it's more like 1.4x effort build the same app for two platforms.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="shared-core-and-types"><a class="header" href="#shared-core-and-types">Shared core and types</a></h1>
+<p>These are the steps to set up the two crates forming the shared core – the core itself, and the shared types crate which does type generation for the foreign languages.</p>
+<div id="admonition-sharp-edge" class="admonition warning">
+<div class="admonition-title">
+<p>Sharp edge</p>
+<p><a class="admonition-anchor-link" href="getting_started/core.html#admonition-sharp-edge"></a></p>
+</div>
+<div>
+<p>Most of these steps are going to be automated in future tooling, and published as crates. For now the set up is effectively a copy &amp; paste from one of the <a href="https://github.com/redbadger/crux/tree/master/examples">example projects</a>.</p>
+</div>
+</div>
+<h2 id="install-the-tools"><a class="header" href="#install-the-tools">Install the tools</a></h2>
+<p>This is an example of a <a href="https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file"><code>rust-toolchain.toml</code></a> file, which you can add at the root of your repo. It should ensure that the correct rust channel and compile targets are installed automatically for you when you use any rust tooling within the repo.</p>
+<!--- includes fail when indented see https://github.com/rust-lang/mdBook/pull/1718 --->
+<pre><code class="language-toml">[toolchain]
+channel = &quot;stable&quot;
+components = [&quot;rustfmt&quot;, &quot;rustc-dev&quot;]
+targets = [
+  &quot;aarch64-apple-darwin&quot;,
+  &quot;aarch64-apple-ios&quot;,
+  &quot;aarch64-apple-ios-sim&quot;,
+  &quot;aarch64-linux-android&quot;,
+  &quot;wasm32-unknown-unknown&quot;,
+  &quot;x86_64-apple-ios&quot;
+]
+profile = &quot;minimal&quot;
+</code></pre>
+<h2 id="create-the-core-crate"><a class="header" href="#create-the-core-crate">Create the core crate</a></h2>
+<h3 id="the-shared-library"><a class="header" href="#the-shared-library">The shared library</a></h3>
+<p>The first library to create is the one that will be shared across all platforms, containing the <em>behavior</em> of the app. You can call it whatever you like, but we have chosen the name <code>shared</code> here.
+You can create the shared rust library, like this:</p>
+<pre><code class="language-sh">cargo new --lib shared
+</code></pre>
+<h3 id="the-workspace-and-library-manifests"><a class="header" href="#the-workspace-and-library-manifests">The workspace and library manifests</a></h3>
+<p>We'll be adding a bunch of other folders into the monorepo, so we are choosing to use Cargo Workspaces. Edit the workspace <code>/Cargo.toml</code> file, at the monorepo root, to add the new library to our workspace. It should look something like this (the <code>package</code> and <code>dependencies</code> fields are just examples):</p>
+<pre><code class="language-toml">[workspace]
+members = [&quot;shared&quot;, &quot;shared_types&quot;]
+
+[workspace.package]
+authors = [&quot;Red Badger Consulting Limited&quot;]
+edition = &quot;2021&quot;
+repository = &quot;https://github.com/redbadger/crux/&quot;
+license = &quot;Apache-2.0&quot;
+keywords = [&quot;crux&quot;, &quot;crux_core&quot;, &quot;cross-platform-ui&quot;, &quot;ffi&quot;, &quot;wasm&quot;]
+rust-version = &quot;1.66&quot;
+
+[workspace.dependencies]
+anyhow = &quot;1.0.69&quot;
+serde = &quot;1.0.152&quot;
+</code></pre>
+<p>The library's manifest, at <code>/shared/Cargo.toml</code>, should look something like the following, but there are a few things to note:</p>
+<ul>
+<li>the <code>crate-type</code>
+<ul>
+<li><code>lib</code> is the default rust library when linking into a rust binary, e.g. in the <code>web-yew</code>, or <code>cli</code>, variant</li>
+<li><code>staticlib</code> is a static library (<code>libshared.a</code>) for including in the Swift iOS app variant</li>
+<li><code>cdylib</code> is a C-ABI dynamic library (<code>libshared.so</code>) for use with JNA when included in the Kotlin Android app variant</li>
+</ul>
+</li>
+<li>the <code>path</code> fields on the crux dependencies are for the <a href="https://github.com/redbadger/crux/tree/master/examples">examples in the Crux repo</a> and so you will probably not need them</li>
+<li>the uniffi dependencies and <code>uniffi-bindgen</code> target should make sense after you read the next section</li>
+</ul>
+<pre><code class="language-toml">[package]
+name = &quot;shared&quot;
+version = &quot;0.1.0&quot;
+edition = &quot;2021&quot;
+rust-version = &quot;1.66&quot;
+
+[lib]
+crate-type = [&quot;lib&quot;, &quot;staticlib&quot;, &quot;cdylib&quot;]
+name = &quot;shared&quot;
+
+[dependencies]
+crux_core = { version = &quot;0.3&quot;, path = &quot;../../../crux_core&quot; }
+crux_macros = { version = &quot;0.1&quot;, path = &quot;../../../crux_macros&quot; }
+serde = { workspace = true, features = [&quot;derive&quot;] }
+lazy_static = &quot;1.4.0&quot;
+uniffi = &quot;0.23.0&quot;
+wasm-bindgen = &quot;0.2.84&quot;
+
+[target.uniffi-bindgen.dependencies]
+uniffi = { version = &quot;0.23.0&quot;, features = [&quot;cli&quot;] }
+
+[build-dependencies]
+uniffi = { version = &quot;0.23.0&quot;, features = [&quot;build&quot;] }
+</code></pre>
+<h3 id="ffi-bindings"><a class="header" href="#ffi-bindings">FFI bindings</a></h3>
+<p>Crux uses Mozilla's <a href="https://mozilla.github.io/uniffi-rs/">Uniffi</a> to generate the FFI bindings for iOS and Android.</p>
+<h4 id="generating-the-uniffi-bindgen-cli-tool"><a class="header" href="#generating-the-uniffi-bindgen-cli-tool">Generating the <code>uniffi-bindgen</code> CLI tool</a></h4>
+<p>Since Mozilla released version <code>0.23.0</code> of Uniffi, we need to also generate the binary that generates these bindings. This avoids the possibility of getting a version mismatch between a separately installed binary and the crate's Uniffi version. You can read more about it <a href="https://mozilla.github.io/uniffi-rs/tutorial/foreign_language_bindings.html">here</a>.</p>
+<p>Generating the binary is simple, we just add the following to our crate, in a file called <code>/shared/src/bin/uniffi-bindgen.rs</code>.</p>
+<pre><pre class="playground"><code class="language-rust">fn main() {
+    uniffi::uniffi_bindgen_main()
+}</code></pre></pre>
+<p>And then we can build it with cargo.</p>
+<pre><code class="language-sh">cargo run -p shared --bin uniffi-bindgen
+
+# or
+
+cargo build
+./target/debug/uniffi-bindgen
+</code></pre>
+<p>The <code>uniffi-bindgen</code> executable will be used during the build in XCode and in Android Studio (see the following pages).</p>
+<h4 id="the-interface-definitions"><a class="header" href="#the-interface-definitions">The interface definitions</a></h4>
+<p>We will need an interface definition file for the FFI bindings. Uniffi has its own file format (similar to WebIDL) that has a <code>.udl</code> extension. You can create one here <code>/shared/src/shared.udl</code>, like this:</p>
+<pre><code class="language-txt">namespace shared {
+  sequence&lt;u8&gt; process_event([ByRef] sequence&lt;u8&gt; msg);
+  sequence&lt;u8&gt; handle_response([ByRef] sequence&lt;u8&gt; uuid, [ByRef] sequence&lt;u8&gt; res);
+  sequence&lt;u8&gt; view();
+};
+</code></pre>
+<p>There are also a few additional parameters to tell Uniffi how to create bindings for Kotlin and Swift. They live in the file <code>/shared/uniffi.toml</code>, like this (feel free to adjust accordingly):</p>
+<pre><code class="language-toml">[bindings.kotlin]
+package_name = &quot;com.example.counter.shared&quot;
+cdylib_name = &quot;shared&quot;
+
+[bindings.swift]
+cdylib_name = &quot;shared_ffi&quot;
+omit_argument_labels = true
+</code></pre>
+<h3 id="scaffolding"><a class="header" href="#scaffolding">Scaffolding</a></h3>
+<p>Soon we will have macros and/or code-gen to help with this, but for now, we need some scaffolding in <code>/shared/src/lib.rs</code>. You'll notice that we are re-exporting the <code>Request</code> type and the capabilities we want to use in our native Shells, as well as our public types from the shared library.</p>
+<pre><code class="language-rust noplayground">pub mod app;
+pub mod capabilities;
+
+use lazy_static::lazy_static;
+use wasm_bindgen::prelude::wasm_bindgen;
+
+use crux_core::Core;
+pub use crux_core::Request;
+pub use crux_http as http;
+
+pub use app::*;
+pub use capabilities::sse;
+
+// TODO hide this plumbing
+
+uniffi::include_scaffolding!(&quot;shared&quot;);
+
+lazy_static! {
+    static ref CORE: Core&lt;Effect, App&gt; = Core::new::&lt;Capabilities&gt;();
+}
+
+#[wasm_bindgen]
+pub fn process_event(data: &amp;[u8]) -&gt; Vec&lt;u8&gt; {
+    CORE.process_event(data)
+}
+
+#[wasm_bindgen]
+pub fn handle_response(uuid: &amp;[u8], data: &amp;[u8]) -&gt; Vec&lt;u8&gt; {
+    CORE.handle_response(uuid, data)
+}
+
+#[wasm_bindgen]
+pub fn view() -&gt; Vec&lt;u8&gt; {
+    CORE.view()
+}</code></pre>
+<h3 id="the-app"><a class="header" href="#the-app">The app</a></h3>
+<p>Now we are in a position to create a basic app in <code>/shared/src/app.rs</code>. This is from the <a href="https://github.com/redbadger/crux/blob/master/examples/hello_world/shared/src/counter.rs">simple Counter example</a> (which also has tests, although we're not showing them here):</p>
+<pre><code class="language-rust noplayground">use crux_core::{render::Render, App};
+use crux_macros::Effect;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+pub enum Event {
+    Increment,
+    Decrement,
+    Reset,
+}
+
+#[derive(Default)]
+pub struct Model {
+    count: isize,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ViewModel {
+    pub count: String,
+}
+
+#[derive(Effect)]
+#[effect(app = &quot;Hello&quot;)]
+pub struct Capabilities {
+    render: Render&lt;Event&gt;,
+}
+
+#[derive(Default)]
+pub struct Hello;
+
+impl App for Hello {
+    type Event = Event;
+    type Model = Model;
+    type ViewModel = ViewModel;
+    type Capabilities = Capabilities;
+
+    fn update(&amp;self, event: Self::Event, model: &amp;mut Self::Model, caps: &amp;Self::Capabilities) {
+        match event {
+            Event::Increment =&gt; model.count += 1,
+            Event::Decrement =&gt; model.count -= 1,
+            Event::Reset =&gt; model.count = 0,
+        };
+
+        caps.render.render();
+    }</code></pre>
+<p>Make sure everything builds OK</p>
+<pre><code class="language-sh">cargo build
+</code></pre>
+<h2 id="create-the-shared-types-crate"><a class="header" href="#create-the-shared-types-crate">Create the shared types crate</a></h2>
+<p>This crate serves as the container for type generation for the foreign languages.</p>
+<ol>
+<li>
+<p>Copy over the <a href="https://github.com/redbadger/crux/tree/master/examples/counter/shared_types">shared_types</a> folder from the counter example.</p>
+</li>
+<li>
+<p>Edit the <code>build.rs</code> file and make sure to only list types you need.</p>
+</li>
+<li>
+<p>Make sure everything builds and foreign types get generated into the <code>generated</code> folder.</p>
+<pre><code class="language-sh">cargo build -vv
+</code></pre>
+</li>
+</ol>
+<div id="admonition-success" class="admonition success">
+<div class="admonition-title">
+<p>Success</p>
+<p><a class="admonition-anchor-link" href="getting_started/core.html#admonition-success"></a></p>
+</div>
+<div>
+<p>You should now be ready to set up <a href="getting_started/ios.html">iOS</a>, <a href="getting_started/android.html">Android</a>, <a href="getting_started/web_react.html">web</a>, or <a href="getting_started/web_yew.html">WebAssembly</a> specific builds.</p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ios--swift-and-swiftui"><a class="header" href="#ios--swift-and-swiftui">iOS — Swift and SwiftUI</a></h1>
+<p>These are the steps to set up Xcode to build and run a simple iOS app that calls into a shared core.</p>
+<div id="admonition-note" class="admonition note">
+<div class="admonition-title">
+<p>Note</p>
+<p><a class="admonition-anchor-link" href="getting_started/ios.html#admonition-note"></a></p>
+</div>
+<div>
+<p>This walk-through assumes you have already added the <code>shared</code> and <code>shared_types</code> libraries to your repo, as described in <a href="getting_started/./core.html">Shared core and types</a>.</p>
+</div>
+</div>
+<div id="admonition-sharp-edge" class="admonition warning">
+<div class="admonition-title">
+<p>Sharp edge</p>
+<p><a class="admonition-anchor-link" href="getting_started/ios.html#admonition-sharp-edge"></a></p>
+</div>
+<div>
+<p>We want to make setting up Xcode to work with Crux really easy. As time progresses we will try to simplify and automate as much as possible, but at the moment there is some manual configuration to do. This only needs doing once, so we hope it's not too much trouble. If you know of any better ways than those we describe below (e.g. how to do Xcode project configuration from the command line), please either raise an issue (or a PR) at <a href="https://github.com/redbadger/crux">https://github.com/redbadger/crux</a>.</p>
+</div>
+</div>
+<h2 id="create-an-ios-app"><a class="header" href="#create-an-ios-app">Create an iOS App</a></h2>
+<p>The first thing we need to do is create a new iOS app in Xcode.</p>
+<p>Let's call the app &quot;iOS&quot; and select &quot;SwiftUI&quot; for the interface and &quot;Swift&quot; for the language. If you choose to create the app in the root folder then your repo's directory structure might now look something like this (some files elided):</p>
+<pre><code class="language-txt">.
+├── Cargo.lock
+├── Cargo.toml
+├── iOS
+│  ├── iOS
+│  │  ├── ContentView.swift
+│  │  └── iOSApp.swift
+│  └── iOS.xcodeproj
+│     └── project.pbxproj
+├── shared
+│  ├── build.rs
+│  ├── Cargo.toml
+│  ├── src
+│  │  ├── hello_world.rs
+│  │  ├── lib.rs
+│  │  └── shared.udl
+│  └── uniffi.toml
+├── shared_types
+│  ├── build.rs
+│  ├── Cargo.toml
+│  └── src
+│     └── lib.rs
+└── target
+</code></pre>
+<h2 id="generate-ffi-bindings"><a class="header" href="#generate-ffi-bindings">Generate FFI bindings</a></h2>
+<p>We want UniFFI to create the Swift bindings and the C headers for our shared library, and store them in a directory called <code>generated</code>.</p>
+<p>To achieve this, we'll associate a script with files that match the pattern <code>*.udl</code> (this will catch the interface definition file we created earlier), and then add our <code>shared.udl</code> file to the project.</p>
+<p>Note that our shared library generates the <code>uniffi-bindgen</code> binary (as explained on the page <a href="getting_started/./core.html">&quot;Shared core and types&quot;</a>) that the script relies on, so make sure you have built it already, using <code>cargo build</code>.</p>
+<p>In &quot;Build Rules&quot;, add a rule to process files that match the pattern <code>*.udl</code> with the following script (and also uncheck &quot;Run once per architecture&quot;).</p>
+<pre><code class="language-bash"># Skip during indexing phase in XCode 13+
+if [ $ACTION == &quot;indexbuild&quot; ]; then
+   echo &quot;Not building *.udl files during indexing.&quot;
+   exit 0
+fi
+
+# Skip for preview builds
+if [ &quot;${ENABLE_PREVIEWS}&quot; = &quot;YES&quot; ]; then
+   echo &quot;Not building *.udl files during preview builds.&quot;
+   exit 0
+fi
+
+# note, for now, run a cargo build manually to ensure the binary exists for this step
+cd &quot;$INPUT_FILE_DIR&quot;/.. &amp;&amp; &quot;$PROJECT_DIR/../target/debug/uniffi-bindgen&quot; generate src/&quot;$INPUT_FILE_NAME&quot; --language swift --out-dir &quot;$PROJECT_DIR/generated&quot;
+</code></pre>
+<p>We'll need to add the following as output files:</p>
+<pre><code class="language-txt">$(PROJECT_DIR)/generated/$(INPUT_FILE_BASE).swift
+</code></pre>
+<pre><code class="language-txt">$(PROJECT_DIR)/generated/$(INPUT_FILE_BASE)FFI.h
+</code></pre>
+<p>Now go to &quot;Build Phases&quot; =&gt; &quot;Compile Sources&quot;, and add <code>/shared/src/shared.udl</code> using the &quot;add other&quot; button, selecting &quot;Copy items if needed&quot; and &quot;Create folder references&quot;.</p>
+<p>Build the project (cmd-B), which will fail, but the above script should run successfully and the &quot;generated&quot; folder should contain the generated Swift types and C header files:</p>
+<pre><code class="language-bash">$ ls iOS/generated
+shared.swift  sharedFFI.h  sharedFFI.modulemap
+</code></pre>
+<h2 id="compile-our-rust-shared-library"><a class="header" href="#compile-our-rust-shared-library">Compile our Rust shared library</a></h2>
+<p>When we build our iOS app, we also want to build the Rust core as a static library so that it can be linked into the binary that we're going to ship. We do this with Cargo, specifying the relevant target.</p>
+<p>Create a group called <code>bin</code> in your Xcode project and add a shell script (called something like <code>rust_build.sh</code>) to it (don't forget to tick the box to ensure it targets our iOS app), with the following contents:</p>
+<pre><code class="language-bash">#!/usr/bin/env bash
+
+if [ &quot;$#&quot; -ne 1 ]; then
+  echo &quot;Usage (note: only call inside XCode!):&quot;
+  echo &quot;$0 &lt;FFI_TARGET&gt;&quot;
+  exit 1
+fi
+
+# what to pass to cargo build -p, e.g. your_lib_ffi
+FFI_TARGET=$1
+
+set -euvx
+
+RELFLAG=
+if [[ &quot;$CONFIGURATION&quot; != &quot;Debug&quot; ]]; then
+  RELFLAG=--release
+fi
+
+IS_SIMULATOR=0
+if [ &quot;${LLVM_TARGET_TRIPLE_SUFFIX-}&quot; = &quot;-simulator&quot; ]; then
+  IS_SIMULATOR=1
+fi
+
+export PATH=&quot;$PATH:$HOME/.cargo/bin&quot;
+export LIBRARY_PATH
+
+for arch in $ARCHS; do
+  case &quot;$arch&quot; in
+  x86_64)
+    if [ $IS_SIMULATOR -eq 0 ]; then
+      echo &quot;Building for x86_64, but not a simulator build. What's going on?&quot; &gt;&amp;2
+      exit 2
+    fi
+
+    # Intel iOS simulator
+    export CFLAGS_x86_64_apple_ios=&quot;-target x86_64-apple-ios&quot;
+    LIBRARY_PATH=&quot;${LIBRARY_PATH-}:$(xcrun --sdk iphonesimulator --show-sdk-path)/usr/lib&quot;
+    cargo build -p &quot;$FFI_TARGET&quot; --lib $RELFLAG --target x86_64-apple-ios
+    ;;
+
+  arm64)
+    if [ $IS_SIMULATOR -eq 0 ]; then
+      # Hardware iOS targets
+      LIBRARY_PATH=&quot;${LIBRARY_PATH-}:$(xcrun --sdk iphoneos --show-sdk-path)/usr/lib&quot;
+      cargo build -p &quot;$FFI_TARGET&quot; --lib $RELFLAG --target aarch64-apple-ios
+    else
+      LIBRARY_PATH=&quot;${LIBRARY_PATH-}:$(xcrun --sdk iphonesimulator --show-sdk-path)/usr/lib&quot;
+      cargo build -p &quot;$FFI_TARGET&quot; --lib $RELFLAG --target aarch64-apple-ios-sim
+    fi
+    ;;
+  esac
+done
+</code></pre>
+<p>Then create a new &quot;Build Phase&quot; of type &quot;Run Script&quot; (called something like <code>Build Rust library</code> — you can rename by double-clicking) to call the script something like this:</p>
+<pre><code class="language-bash">cd &quot;$PROJECT_DIR/../shared&quot;
+bash &quot;$PROJECT_DIR/bin/rust_build.sh&quot; shared
+</code></pre>
+<p>Uncheck &quot;Based on dependency analysis&quot;.</p>
+<p>You can drag this build phase up a bit (e.g. before &quot;Compile Sources&quot;), and test that it compiles the Rust library when you build your project.</p>
+<h2 id="link-the-rust-shared-library-into-our-ios-binary"><a class="header" href="#link-the-rust-shared-library-into-our-ios-binary">Link the Rust shared library into our iOS binary</a></h2>
+<p>Now that we have successfully compiled the share Rust library, we need to link it into the iOS binary. We need to tell Xcode where to find the relevant static library based on which build configuration we have built for (<code>Debug</code> or <code>Release</code>).</p>
+<p>This is a little convoluted, but this may be the easiest way to do this:</p>
+<ol>
+<li>
+<p>In &quot;Build Settings&quot;, search for &quot;library search paths&quot; and add a dummy string &quot;XXXX&quot; for debug and release (this will update the project file so you can search in it for <code>XXXX</code> in the next step).</p>
+</li>
+<li>
+<p>Open the project configuration file (<code>*.pbxproj</code>) in a code editor and search for &quot;XXXX&quot; (you should find 2 occurrences), and replace it with the following:</p>
+<ol>
+<li>In the &quot;Debug&quot; section</li>
+</ol>
+<pre><code class="language-txt">&quot;LIBRARY_SEARCH_PATHS[sdk=iphoneos*][arch=arm64]&quot; = &quot;$(PROJECT_DIR)/../target/aarch64-apple-ios/debug&quot;;
+&quot;LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*][arch=arm64]&quot; = &quot;$(PROJECT_DIR)/../target/aarch64-apple-ios-sim/debug&quot;;
+&quot;LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*][arch=x86_64]&quot; = &quot;$(PROJECT_DIR)/../target/x86_64-apple-ios/debug&quot;;
+</code></pre>
+<ol>
+<li>In the &quot;Release&quot;&quot; section</li>
+</ol>
+<pre><code class="language-txt">&quot;LIBRARY_SEARCH_PATHS[sdk=iphoneos*][arch=arm64]&quot; = &quot;$(PROJECT_DIR)/../target/aarch64-apple-ios/release&quot;;
+&quot;LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*][arch=arm64]&quot; = &quot;$(PROJECT_DIR)/../target/aarch64-apple-ios-sim/release&quot;;
+&quot;LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*][arch=x86_64]&quot; = &quot;$(PROJECT_DIR)/../target/x86_64-apple-ios/release&quot;;
+</code></pre>
+</li>
+<li>
+<p>In &quot;Build Phases&quot;, add <code>/target/debug/libshared.a</code> to the &quot;Link Binary with Libraries&quot; section (this is the wrong target, but the library search paths, which we set above, should resolve this.
+For more info see the blog post linked above (<a href="https://blog.mozilla.org/data/2022/01/31/this-week-in-glean-building-and-deploying-a-rust-library-on-ios/">this post</a>))</p>
+</li>
+</ol>
+<h2 id="add-the-serde-package"><a class="header" href="#add-the-serde-package">Add the <code>Serde</code> package</a></h2>
+<p>In order to serialize data across the &quot;bridge&quot; we need to add the <a href="https://github.com/starcoin-sdk/Serde.swift"><code>Serde</code> package</a> to our project. You can do this with <code>File -&gt; Add Packages</code> and search for &quot;https://github.com/starcoin-sdk/Serde.swift&quot;.</p>
+<h2 id="add-the-bridging-header"><a class="header" href="#add-the-bridging-header">Add the bridging header</a></h2>
+<p>In &quot;Build Settings&quot;, search for &quot;bridging header&quot;, and add <code>generated/sharedFFI.h</code>, for any architecture/SDK, i.e. in both Debug and Release.
+If there isn't already a setting for &quot;bridging header&quot; you can add one (and then delete it) as per <a href="https://stackoverflow.com/questions/41787935/how-to-use-objective-c-bridging-header-in-a-swift-project/41788055#41788055">this StackOverflow question</a></p>
+<h2 id="add-the-shared-types"><a class="header" href="#add-the-shared-types">Add the Shared Types</a></h2>
+<p>In <code>File -&gt; Add Files to iOS</code>, add <code>/shared_types/generated/swift/shared_types.swift</code>.</p>
+<h2 id="create-some-ui-and-run-in-the-simulator"><a class="header" href="#create-some-ui-and-run-in-the-simulator">Create some UI and run in the Simulator</a></h2>
+<h3 id="hello-world-counter-example"><a class="header" href="#hello-world-counter-example">Hello World counter example</a></h3>
+<div id="admonition-example" class="admonition example">
+<div class="admonition-title">
+<p>Example</p>
+<p><a class="admonition-anchor-link" href="getting_started/ios.html#admonition-example"></a></p>
+</div>
+<div>
+<p>There are several <a href="https://github.com/redbadger/crux/tree/master/examples">examples</a> of iOS apps in the Crux repository.</p>
+<p>However, the simplest example is the <a href="https://github.com/redbadger/crux/tree/master/examples/hello_world">Hello World counter example</a> — it only has <code>shared</code> and <code>shared_types</code> libraries, which will work with the following example code.</p>
+</div>
+</div>
+<p>Edit <code>ContentView.swift</code> to look like this:</p>
+<pre><code class="language-swift">import Serde
+import SwiftUI
+
+enum Message {
+    case message(Event)
+}
+
+@MainActor
+class Model: ObservableObject {
+    @Published var view = ViewModel(count: &quot;&quot;)
+
+    init() {
+        update(msg: .message(.reset))
+    }
+
+    func update(msg: Message) {
+        let reqs: [Request]
+
+        switch msg {
+        case let .message(m):
+            reqs = try! [Request].bcsDeserialize(input: iOS.processEvent(try! m.bcsSerialize()))
+        }
+
+        for req in reqs {
+            switch req.effect {
+            case .render(_): view = try! ViewModel.bcsDeserialize(input: iOS.view())
+            }
+        }
+    }
+}
+
+struct ActionButton: View {
+    var label: String
+    var color: Color
+    var action: () -&gt; Void
+
+    init(label: String, color: Color, action: @escaping () -&gt; Void) {
+        self.label = label
+        self.color = color
+        self.action = action
+    }
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .fontWeight(.bold)
+                .font(.body)
+                .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
+                .background(color)
+                .cornerRadius(10)
+                .foregroundColor(.white)
+                .padding()
+        }
+    }
+}
+
+struct ContentView: View {
+    @ObservedObject var model: Model
+
+    var body: some View {
+        VStack {
+            Image(systemName: &quot;globe&quot;)
+                .imageScale(.large)
+                .foregroundColor(.accentColor)
+            Text(model.view.count)
+            HStack {
+                ActionButton(label: &quot;Reset&quot;, color: .red) {
+                    model.update(msg: .message(.reset))
+                }
+                ActionButton(label: &quot;Inc&quot;, color: .green) {
+                    model.update(msg: .message(.increment))
+                }
+                ActionButton(label: &quot;Dec&quot;, color: .yellow) {
+                    model.update(msg: .message(.decrement))
+                }
+            }
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView(model: Model())
+    }
+}
+</code></pre>
+<p>And edit <code>iosApp.swift</code> to look like this:</p>
+<pre><code class="language-swift">import SwiftUI
+
+@main
+struct iOSApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView(model: Model())
+        }
+    }
+}
+</code></pre>
+<div id="admonition-success" class="admonition success">
+<div class="admonition-title">
+<p>Success</p>
+<p><a class="admonition-anchor-link" href="getting_started/ios.html#admonition-success"></a></p>
+</div>
+<div>
+<p>You should then be able to run the app in the simulator, and it should look like this:</p>
+<p align="center"><img alt="hello world app" src="getting_started/./hello_world_ios.webp"  width="300"></p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="android--kotlin-and-jetpack-compose"><a class="header" href="#android--kotlin-and-jetpack-compose">Android — Kotlin and Jetpack Compose</a></h1>
+<p>These are the steps to set up Android Studio to build and run a simple Android app that calls into a shared core.</p>
+<div id="admonition-note" class="admonition note">
+<div class="admonition-title">
+<p>Note</p>
+<p><a class="admonition-anchor-link" href="getting_started/android.html#admonition-note"></a></p>
+</div>
+<div>
+<p>This walk-through assumes you have already added the <code>shared</code> and <code>shared_types</code> libraries to your repo, as described in <a href="getting_started/./core.html">Shared core and types</a>.</p>
+</div>
+</div>
+<div id="admonition-sharp-edge" class="admonition warning">
+<div class="admonition-title">
+<p>Sharp edge</p>
+<p><a class="admonition-anchor-link" href="getting_started/android.html#admonition-sharp-edge"></a></p>
+</div>
+<div>
+<p>We want to make setting up Android Studio to work with Crux really easy. As time progresses we will try to simplify and automate as much as possible, but at the moment there is some manual configuration to do. This only needs doing once, so we hope it's not too much trouble. If you know of any better ways than those we describe below, please either raise an issue (or a PR) at <a href="https://github.com/redbadger/crux">https://github.com/redbadger/crux</a>.</p>
+</div>
+</div>
+<h2 id="create-an-android-app"><a class="header" href="#create-an-android-app">Create an Android App</a></h2>
+<p>The first thing we need to do is create a new Android app in Android Studio.</p>
+<p>Open Android Studio and create a new project, for &quot;Phone and Tablet&quot;, of type &quot;Empty Compose Activity (Material3)&quot;. In this walk-through, we'll call it &quot;Android&quot; (and use a minimum SDK of API 33).</p>
+<p>If you choose to create the app in the root folder then your repo's directory structure might now look something like this (some files elided):</p>
+<pre><code class="language-txt">.
+├── Android
+│  ├── app
+│  │  ├── build.gradle
+│  │  ├── libs
+│  │  └── src
+│  │     └── main
+│  │        ├── AndroidManifest.xml
+│  │        └── java
+│  │           └── com
+│  │              └── example
+│  │                 └── android
+│  │                    └── MainActivity.kt
+│  ├── build.gradle
+│  ├── gradle.properties
+│  ├── local.properties
+│  └── settings.gradle
+├── Cargo.lock
+├── Cargo.toml
+├── shared
+│  ├── build.rs
+│  ├── Cargo.toml
+│  ├── src
+│  │  ├── hello_world.rs
+│  │  ├── lib.rs
+│  │  └── shared.udl
+│  └── uniffi.toml
+├── shared_types
+│  ├── build.rs
+│  ├── Cargo.toml
+│  └── src
+│     └── lib.rs
+└── target
+</code></pre>
+<h2 id="add-a-kotlin-android-library"><a class="header" href="#add-a-kotlin-android-library">Add a Kotlin Android Library</a></h2>
+<p>This shared Android library (<code>aar</code>) is going to wrap our shared Rust library.</p>
+<p>Under <code>File -&gt; New -&gt; New Module</code>, choose &quot;Android Library&quot; and call it something like <code>shared</code>. Set the &quot;Package name&quot; to match the one from your <code>/shared/uniffi.toml</code>, e.g. <code>com.example.counter.shared</code>.</p>
+<p>For more information on how to add an Android library see <a href="https://developer.android.com/studio/projects/android-library">https://developer.android.com/studio/projects/android-library</a>.</p>
+<p>We can now add this library as a <em>dependency</em> of our app.</p>
+<div id="admonition-tip" class="admonition tip">
+<div class="admonition-title">
+<p>Tip</p>
+<p><a class="admonition-anchor-link" href="getting_started/android.html#admonition-tip"></a></p>
+</div>
+<div>
+<p>Don't just copy and paste the groovy snippets on this page — instead, ensure that each section has (at least) the contents shown.</p>
+</div>
+</div>
+<p>Merge the following into the <strong>app</strong>'s <code>build.gradle</code> (<code>/Android/app/build.gradle</code>).</p>
+<pre><code class="language-groovy">android {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            freeCompilerArgs += &quot;-Xopt-in=kotlin.RequiresOptIn&quot;
+        }
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            // this prevents an error with duplicate META-INF/DEPENDENCIES
+            excludes += '/META-INF/DEPENDENCIES'
+        }
+    }
+}
+
+dependencies {
+    // our shared library
+    implementation project(path: ':shared')
+
+    def composeBom = platform('androidx.compose:compose-bom:2022.10.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    implementation(&quot;androidx.compose.material3:material3&quot;)
+
+    // Android Studio Preview support
+    implementation(&quot;androidx.compose.ui:ui-tooling-preview&quot;)
+    debugImplementation(&quot;androidx.compose.ui:ui-tooling&quot;)
+
+    // UI Tests
+    androidTestImplementation(&quot;androidx.compose.ui:ui-test-junit4&quot;)
+    debugImplementation(&quot;androidx.compose.ui:ui-test-manifest&quot;)
+
+    // Optional - Integration with activities
+    implementation(&quot;androidx.activity:activity-compose:1.6.1&quot;)
+    // Optional - Integration with ViewModels
+    implementation(&quot;androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1&quot;)
+    // Optional - Integration with LiveData
+    implementation(&quot;androidx.compose.runtime:runtime-livedata&quot;)
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+
+    implementation('com.diem:client-sdk-java:1.0.5') {
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15to18'
+    }
+}
+</code></pre>
+<h2 id="the-rust-shared-library"><a class="header" href="#the-rust-shared-library">The Rust shared library</a></h2>
+<p>We'll use the following tools to incorporate our Rust shared library into the Android library added above. This includes compiling and linking the Rust dynamic library and generating the runtime bindings and the shared types (including copying them into our project).</p>
+<ul>
+<li>The <a href="https://developer.android.com/ndk">Android NDK</a></li>
+<li>Mozilla's <a href="https://github.com/mozilla/rust-android-gradle">Rust gradle plugin</a> for Android</li>
+<li><a href="https://github.com/java-native-access/jna">Java Native Access</a></li>
+<li><a href="https://mozilla.github.io/uniffi-rs/">Uniffi</a> to generate Java bindings</li>
+<li><code>com.novi.serde</code>, which is part of the <a href="https://javadoc.io/doc/com.diem/client-sdk-java/latest/index.html">diem client SDK</a>, which we'll need for serialization</li>
+</ul>
+<p>Let's get started.</p>
+<div id="admonition-tip-1" class="admonition tip">
+<div class="admonition-title">
+<p>Tip</p>
+<p><a class="admonition-anchor-link" href="getting_started/android.html#admonition-tip-1"></a></p>
+</div>
+<div>
+<p>Don't just copy and paste the groovy snippets on this page — instead, ensure that each section has (at least) the contents shown.</p>
+</div>
+</div>
+<p>Merge the following into the <strong>project</strong>'s <code>build.gradle</code> (<code>/Android/build.gradle</code>).</p>
+<pre><code class="language-groovy">buildscript {
+    ext {
+        compose_version = '1.3.3'
+    }
+}
+
+plugins {
+    id &quot;org.mozilla.rust-android-gradle.rust-android&quot; version &quot;0.9.3&quot;
+}
+</code></pre>
+<p>Merge the following into the <strong>library</strong>'s <code>build.gradle</code> (<code>/Android/shared/build.gradle</code>).</p>
+<pre><code class="language-groovy">plugins {
+    id 'org.mozilla.rust-android-gradle.rust-android'
+}
+android {
+    ndkVersion &quot;25.1.8937393&quot;
+}
+
+dependencies {
+    implementation &quot;net.java.dev.jna:jna:5.12.1@aar&quot;
+
+    // for com.novi.serde
+    implementation('com.diem:client-sdk-java:1.0.5') {
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15to18'
+    }
+}
+
+apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
+
+cargo {
+   module  = &quot;../..&quot;
+   libname = &quot;shared&quot;
+   targets = [&quot;arm64&quot;]
+   extraCargoBuildArguments = ['--package', 'shared']
+}
+
+afterEvaluate {
+   // The `cargoBuild` task isn't available until after evaluation.
+   android.libraryVariants.all { variant -&gt;
+      def productFlavor = &quot;&quot;
+      variant.productFlavors.each {
+            productFlavor += &quot;${it.name.capitalize()}&quot;
+      }
+      def buildType = &quot;${variant.buildType.name.capitalize()}&quot;
+      tasks[&quot;cargoBuild&quot;].dependsOn(tasks[&quot;bindGen&quot;])
+      tasks[&quot;typesGen&quot;].dependsOn(tasks[&quot;cargoBuild&quot;])
+      tasks[&quot;generate${productFlavor}${buildType}Assets&quot;].dependsOn(tasks[&quot;typesGen&quot;], tasks[&quot;cargoBuild&quot;])
+   }
+}
+
+task bindGen(type: Exec) {
+    def outDir = &quot;${projectDir}/src/main/java&quot;
+    workingDir &quot;../../&quot;
+    commandLine(
+            &quot;sh&quot;, &quot;-c&quot;,
+            &quot;&quot;&quot;\
+            target/debug/uniffi-bindgen generate shared/src/shared.udl \
+            --language kotlin \
+            --out-dir $outDir
+            &quot;&quot;&quot;
+    )
+}
+
+task typesGen(type: Exec) {
+   def outDir = &quot;${projectDir}/src/main/java&quot;
+   def srcDir = &quot;shared_types/generated/java/com&quot;
+   workingDir &quot;../../&quot;
+   commandLine(
+            &quot;sh&quot;, &quot;-c&quot;,
+            &quot;&quot;&quot;\
+            cp -r $srcDir $outDir
+            &quot;&quot;&quot;
+   )
+}
+
+</code></pre>
+<div id="admonition-tip-2" class="admonition tip">
+<div class="admonition-title">
+<p>Tip</p>
+<p><a class="admonition-anchor-link" href="getting_started/android.html#admonition-tip-2"></a></p>
+</div>
+<div>
+<p>When you have edited the gradle files, don't forget to click &quot;sync now&quot;.</p>
+</div>
+</div>
+<p>If you now build your project you should see the shared library object file, and the shared types, in the right places.</p>
+<pre><code class="language-sh">$ ls --tree Android/shared/build/rustJniLibs
+Android/shared/build/rustJniLibs
+└── android
+   └── arm64-v8a
+      └── libshared.so
+
+$ ls --tree Android/shared/src/main/java/com/example/counter
+Android/shared/src/main/java/com/example/counter
+├── shared
+│  └── shared.kt
+└── shared_types
+   ├── Effect.java
+   ├── Event.java
+   ├── RenderOperation.java
+   ├── Request.java
+   ├── Requests.java
+   ├── TraitHelpers.java
+   └── ViewModel.java
+</code></pre>
+<h2 id="create-some-ui-and-run-in-the-simulator-1"><a class="header" href="#create-some-ui-and-run-in-the-simulator-1">Create some UI and run in the Simulator</a></h2>
+<h3 id="hello-world-counter-example-1"><a class="header" href="#hello-world-counter-example-1">Hello World counter example</a></h3>
+<div id="admonition-example" class="admonition example">
+<div class="admonition-title">
+<p>Example</p>
+<p><a class="admonition-anchor-link" href="getting_started/android.html#admonition-example"></a></p>
+</div>
+<div>
+<p>There are several <a href="https://github.com/redbadger/crux/tree/master/examples">examples</a> of Android apps in the Crux repository.</p>
+<p>However, the simplest example is the <a href="https://github.com/redbadger/crux/tree/master/examples/hello_world">Hello World counter example</a> — it only has <code>shared</code> and <code>shared_types</code> libraries, which will work with the following example code.</p>
+</div>
+</div>
+<p>Edit <code>/Android/app/src/main/java/com/example/android/MainActivity.kt</code> to look like this:</p>
+<pre><code class="language-kotlin">@file:OptIn(ExperimentalUnsignedTypes::class)
+package com.example.android
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.android.ui.theme.AndroidTheme
+import com.example.counter.shared.message
+import com.example.counter.shared.view
+import com.example.counter.shared_types.Effect
+import com.example.counter.shared_types.Event
+import com.example.counter.shared_types.Requests
+import com.example.counter.shared_types.Request as Req
+import com.example.counter.shared_types.ViewModel as MyViewModel
+
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            AndroidTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    View()
+                }
+            }
+        }
+    }
+}
+
+sealed class CoreMessage {
+    data class Message(val event: Event) : CoreMessage()
+}
+
+class Model : ViewModel() {
+    var view: MyViewModel by mutableStateOf(MyViewModel(&quot;&quot;))
+        private set
+
+    init {
+        update(CoreMessage.Message(Event.Reset()))
+    }
+
+    fun update(msg: CoreMessage) {
+        val requests: List&lt;Req&gt; =
+            when (msg) {
+                is CoreMessage.Message -&gt; {
+                    Requests.bcsDeserialize(
+                        message(msg.event.bcsSerialize().toUByteArray().toList()).toUByteArray()
+                            .toByteArray()
+                    )
+                }
+            }
+
+        for (req in requests) when (req.effect) {
+            is Effect.Render -&gt; {
+                this.view = MyViewModel.bcsDeserialize(view().toUByteArray().toByteArray())
+            }
+        }
+    }
+}
+
+@Composable
+fun View(model: Model = viewModel()) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
+    ) {
+        Text(text = model.view.count.toString(), modifier = Modifier.padding(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Button(
+                onClick = { model.update(CoreMessage.Message(Event.Reset())) },
+                colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) { Text(text = &quot;Reset&quot;, color = Color.White) }
+            Button(
+                onClick = { model.update(CoreMessage.Message(Event.Increment())) },
+                colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) { Text(text = &quot;Increment&quot;, color = Color.White) }
+            Button(
+                onClick = { model.update(CoreMessage.Message(Event.Decrement())) },
+                colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondary
+                )
+            ) { Text(text = &quot;Decrement&quot;, color = Color.White) }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    AndroidTheme {
+        View()
+    }
+}
+</code></pre>
+<div id="admonition-success" class="admonition success">
+<div class="admonition-title">
+<p>Success</p>
+<p><a class="admonition-anchor-link" href="getting_started/android.html#admonition-success"></a></p>
+</div>
+<div>
+<p>You should then be able to run the app in the simulator, and it should look like this:</p>
+<p align="center"><img alt="hello world app" src="getting_started/./hello_world_android.webp"  width="300"></p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="web--typescript-and-react-nextjs"><a class="header" href="#web--typescript-and-react-nextjs">Web — TypeScript and React (Next.js)</a></h1>
+<p>These are the steps to set up and run a simple TypeScript Web app that calls into a shared core.</p>
+<div id="admonition-note" class="admonition note">
+<div class="admonition-title">
+<p>Note</p>
+<p><a class="admonition-anchor-link" href="getting_started/web_react.html#admonition-note"></a></p>
+</div>
+<div>
+<p>This walk-through assumes you have already added the <code>shared</code> and <code>shared_types</code> libraries to your repo, as described in <a href="getting_started/./core.html">Shared core and types</a>.</p>
+</div>
+</div>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="getting_started/web_react.html#admonition-info"></a></p>
+</div>
+<div>
+<p>There are many frameworks available for writing Web applications with JavaScript/TypeScript. We've chosen <a href="https://reactjs.org/">React</a> with <a href="https://nextjs.org/">Next.js</a> for this walk-through because it is simple and popular. However, a similar setup would work for other frameworks.</p>
+</div>
+</div>
+<h2 id="create-a-nextjs-app"><a class="header" href="#create-a-nextjs-app">Create a Next.js App</a></h2>
+<p>For this walk-through, we'll use the <a href="https://pnpm.io/"><code>pnpm</code></a> package manager for no reason other than we like it the most!</p>
+<p>Let's create a simple Next.js app for TypeScript, using <code>pnpx</code> (from <code>pnpm</code>). You can accept all the defaults.</p>
+<pre><code class="language-sh">pnpx create-next-app@latest web-nextjs --ts --use-pnpm
+</code></pre>
+<p>Then we can change to the project directory and start adding dependencies.</p>
+<pre><code class="language-sh">cd web-nextjs
+</code></pre>
+<h2 id="compile-our-rust-shared-library-1"><a class="header" href="#compile-our-rust-shared-library-1">Compile our Rust shared library</a></h2>
+<p>When we build our app, we also want to compile the Rust core to WebAssembly so that it can be referenced from our code.</p>
+<p>To do this, we'll use <a href="https://rustwasm.github.io/wasm-pack/installer/"><code>wasm-pack</code></a>, which you can install like this:</p>
+<pre><code class="language-sh"># with homebrew
+brew install wasm-pack
+
+# or directly
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+</code></pre>
+<p>But we won't call <code>wasm-pack</code> directly. Instead we'll use a Next.js plugin to do this for us. That way the shared library will be compiled to WebAssembly when we build our app using <code>pnpm</code>.</p>
+<p>Add the <code>wasm-pack-plugin</code> to our project:</p>
+<pre><code class="language-sh">pnpm install --save-dev @wasm-tool/wasm-pack-plugin
+</code></pre>
+<p>We'll need to configure Next.js to call the plugin by editing <code>web-nextjs/next.config.js</code> to look like this:</p>
+<pre><code class="language-javascript">const WasmPackPlugin = require(&quot;@wasm-tool/wasm-pack-plugin&quot;);
+const path = require(&quot;path&quot;);
+
+// see https://github.com/wasm-tool/wasm-pack-plugin/issues/112
+let loaded = false;
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  webpack(nextConfig) {
+    if (!loaded) {
+      nextConfig.plugins.push(
+        new WasmPackPlugin({
+          crateDirectory: path.resolve(__dirname, &quot;..&quot;, &quot;shared&quot;),
+          extraArgs: &quot;--target web&quot;,
+          outDir: path.resolve(__dirname, &quot;shared&quot;, &quot;core&quot;),
+        })
+      );
+      loaded = true;
+    }
+
+    return nextConfig;
+  },
+};
+
+module.exports = nextConfig;
+</code></pre>
+<h2 id="add-the-shared-types-1"><a class="header" href="#add-the-shared-types-1">Add the Shared Types</a></h2>
+<p>To generate the shared types for TypeScript, we can just run <code>cargo build</code> from the root of our repository. You can check that they have been generated correctly:</p>
+<pre><code class="language-sh">ls --tree shared_types/generated/typescript
+shared_types/generated/typescript
+├── bcs
+│  ├── bcsDeserializer.d.ts
+│  ├── bcsDeserializer.js
+│  ├── bcsDeserializer.ts
+│  ├── bcsSerializer.d.ts
+│  ├── bcsSerializer.js
+│  ├── bcsSerializer.ts
+│  ├── mod.d.ts
+│  ├── mod.js
+│  └── mod.ts
+├── node_modules
+│  └── typescript -&gt; .pnpm/typescript@4.8.4/node_modules/typescript
+├── package.json
+├── pnpm-lock.yaml
+├── serde
+│  ├── binaryDeserializer.d.ts
+│  ├── binaryDeserializer.js
+│  ├── binaryDeserializer.ts
+│  ├── binarySerializer.d.ts
+│  ├── binarySerializer.js
+│  ├── binarySerializer.ts
+│  ├── deserializer.d.ts
+│  ├── deserializer.js
+│  ├── deserializer.ts
+│  ├── mod.d.ts
+│  ├── mod.js
+│  ├── mod.ts
+│  ├── serializer.d.ts
+│  ├── serializer.js
+│  ├── serializer.ts
+│  ├── types.d.ts
+│  ├── types.js
+│  └── types.ts
+├── tsconfig.json
+└── types
+   ├── shared_types.d.ts
+   ├── shared_types.js
+   └── shared_types.ts
+</code></pre>
+<p>You can see that it also generates an <code>npm</code> package that we can add directly to our project.</p>
+<pre><code class="language-sh">pnpm add ../shared_types/generated/typescript
+</code></pre>
+<h2 id="create-some-ui"><a class="header" href="#create-some-ui">Create some UI</a></h2>
+<h3 id="hello-world-counter-example-2"><a class="header" href="#hello-world-counter-example-2">Hello World counter example</a></h3>
+<div id="admonition-example" class="admonition example">
+<div class="admonition-title">
+<p>Example</p>
+<p><a class="admonition-anchor-link" href="getting_started/web_react.html#admonition-example"></a></p>
+</div>
+<div>
+<p>There are several <a href="https://github.com/redbadger/crux/tree/master/examples">examples</a> of Next.js apps in the Crux repository.</p>
+<p>However, the simplest example is the <a href="https://github.com/redbadger/crux/tree/master/examples/hello_world">Hello World counter example</a> — it only has <code>shared</code> and <code>shared_types</code> libraries, which will work with the following example code.</p>
+</div>
+</div>
+<p>Edit <code>web-nextjs/src/pages/index.tsx</code> to look like this:</p>
+<pre><code class="language-typescript">import type { NextPage } from &quot;next&quot;;
+import Head from &quot;next/head&quot;;
+import { useEffect, useState } from &quot;react&quot;;
+
+import init_core, { process_event as sendEvent, view } from &quot;../../shared/core&quot;;
+import * as types from &quot;shared_types/types/shared_types&quot;;
+import * as bcs from &quot;shared_types/bcs/mod&quot;;
+
+interface Event {
+  kind: &quot;event&quot;;
+  event: types.Event;
+}
+
+type State = {
+  count: string;
+};
+
+const initialState: State = {
+  count: &quot;&quot;,
+};
+
+function deserializeRequests(bytes: Uint8Array) {
+  let deserializer = new bcs.BcsDeserializer(bytes);
+
+  const len = deserializer.deserializeLen();
+
+  let requests: types.Request[] = [];
+
+  for (let i = 0; i &lt; len; i++) {
+    const request = types.Request.deserialize(deserializer);
+    requests.push(request);
+  }
+
+  return requests;
+}
+
+const Home: NextPage = () =&gt; {
+  const [state, setState] = useState(initialState);
+
+  const dispatch = (action: Event) =&gt; {
+    const serializer = new bcs.BcsSerializer();
+    action.event.serialize(serializer);
+    const requests = sendEvent(serializer.getBytes());
+    handleRequests(requests);
+  };
+
+  const handleRequests = async (bytes: Uint8Array) =&gt; {
+    let requests = deserializeRequests(bytes);
+
+    for (const { uuid: _, effect } of requests) {
+      switch (effect.constructor) {
+        case types.EffectVariantRender:
+          let bytes = view();
+          let viewDeserializer = new bcs.BcsDeserializer(bytes);
+          let viewModel = types.ViewModel.deserialize(viewDeserializer);
+
+          setState({
+            count: viewModel.count,
+          });
+
+          break;
+      }
+    }
+  };
+
+  useEffect(() =&gt; {
+    async function loadCore() {
+      await init_core();
+
+      // Initial event
+      dispatch({
+        kind: &quot;event&quot;,
+        event: new types.EventVariantReset(),
+      });
+    }
+
+    loadCore();
+  }, []);
+
+  return (
+    &lt;&gt;
+      &lt;Head&gt;
+        &lt;title&gt;Next.js Example&lt;/title&gt;
+      &lt;/Head&gt;
+
+      &lt;main&gt;
+        &lt;section className=&quot;box container has-text-centered m-5&quot;&gt;
+          &lt;p className=&quot;is-size-5&quot;&gt;{state.count}&lt;/p&gt;
+          &lt;div className=&quot;buttons section is-centered&quot;&gt;
+            &lt;button
+              className=&quot;button is-primary is-danger&quot;
+              onClick={() =&gt;
+                dispatch({
+                  kind: &quot;event&quot;,
+                  event: new types.EventVariantReset(),
+                })
+              }
+            &gt;
+              {&quot;Reset&quot;}
+            &lt;/button&gt;
+            &lt;button
+              className=&quot;button is-primary is-success&quot;
+              onClick={() =&gt;
+                dispatch({
+                  kind: &quot;event&quot;,
+                  event: new types.EventVariantIncrement(),
+                })
+              }
+            &gt;
+              {&quot;Increment&quot;}
+            &lt;/button&gt;
+            &lt;button
+              className=&quot;button is-primary is-warning&quot;
+              onClick={() =&gt;
+                dispatch({
+                  kind: &quot;event&quot;,
+                  event: new types.EventVariantDecrement(),
+                })
+              }
+            &gt;
+              {&quot;Decrement&quot;}
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+      &lt;/main&gt;
+    &lt;/&gt;
+  );
+};
+
+export default Home;
+</code></pre>
+<p>Now all we need is some CSS. Edit <code>examples/hello_world/web-nextjs/src/pages/_document.tsx</code> to look like this:</p>
+<pre><code class="language-typescript">import { Html, Head, Main, NextScript } from &quot;next/document&quot;;
+
+export default function Document() {
+  return (
+    &lt;Html&gt;
+      &lt;Head&gt;
+        &lt;link
+          rel=&quot;stylesheet&quot;
+          href=&quot;https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css&quot;
+        /&gt;
+      &lt;/Head&gt;
+      &lt;body&gt;
+        &lt;Main /&gt;
+        &lt;NextScript /&gt;
+      &lt;/body&gt;
+    &lt;/Html&gt;
+  );
+}
+</code></pre>
+<h2 id="build-and-serve-our-app"><a class="header" href="#build-and-serve-our-app">Build and serve our app</a></h2>
+<p>We can build our app, and serve it for the browser, in one simple step.</p>
+<pre><code class="language-sh">pnpm dev
+</code></pre>
+<div id="admonition-success" class="admonition success">
+<div class="admonition-title">
+<p>Success</p>
+<p><a class="admonition-anchor-link" href="getting_started/web_react.html#admonition-success"></a></p>
+</div>
+<div>
+<p>Your app should look like this:</p>
+<p align="center"><img alt="hello world app" src="getting_started/./hello_world_nextjs.webp"  width="300"></p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="web--rust-and-yew"><a class="header" href="#web--rust-and-yew">Web — Rust and Yew</a></h1>
+<p>These are the steps to set up and run a simple Rust Web app that calls into a shared core.</p>
+<div id="admonition-note" class="admonition note">
+<div class="admonition-title">
+<p>Note</p>
+<p><a class="admonition-anchor-link" href="getting_started/web_yew.html#admonition-note"></a></p>
+</div>
+<div>
+<p>This walk-through assumes you have already added the <code>shared</code> and <code>shared_types</code> libraries to your repo, as described in <a href="getting_started/./core.html">Shared core and types</a>.</p>
+</div>
+</div>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="getting_started/web_yew.html#admonition-info"></a></p>
+</div>
+<div>
+<p>There are many frameworks available for writing Web applications in Rust. We've chosen <a href="https://yew.rs/">Yew</a> for this walk-through because it is arguably the most mature. However, a similar setup would work for any framework that compiles to WebAssembly.</p>
+</div>
+</div>
+<h2 id="create-a-yew-app"><a class="header" href="#create-a-yew-app">Create a Yew App</a></h2>
+<p>Our Yew app is just a new Rust project, which we can create with Cargo. For this example we'll call it <code>web-yew</code>.</p>
+<pre><code class="language-sh">cargo new web-yew
+</code></pre>
+<p>We'll also want to add this new project to our Cargo workspace, by editing the root <code>Cargo.toml</code> file.</p>
+<pre><code class="language-toml">[workspace]
+members = [&quot;shared&quot;, &quot;web-yew&quot;]
+</code></pre>
+<p>Now we can <code>cd</code> into the <code>web-yew</code> directory and start fleshing out our project. Let's add some dependencies to <code>shared/Cargo.toml</code>.</p>
+<pre><code class="language-toml">[package]
+name = &quot;web-yew&quot;
+version = &quot;0.1.0&quot;
+edition = &quot;2021&quot;
+
+[dependencies]
+bcs = &quot;0.1.4&quot;
+shared = { path = &quot;../shared&quot; }
+yew = { version = &quot;0.20.0&quot;, features = [&quot;csr&quot;] }
+</code></pre>
+<p>We'll also need a file called <code>index.html</code>, to serve our app.</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot; /&gt;
+    &lt;title&gt;Yew App&lt;/title&gt;
+    &lt;link
+      rel=&quot;stylesheet&quot;
+      href=&quot;https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css&quot;
+    /&gt;
+  &lt;/head&gt;
+&lt;/html&gt;
+</code></pre>
+<h2 id="create-some-ui-1"><a class="header" href="#create-some-ui-1">Create some UI</a></h2>
+<h3 id="hello-world-counter-example-3"><a class="header" href="#hello-world-counter-example-3">Hello World counter example</a></h3>
+<div id="admonition-example" class="admonition example">
+<div class="admonition-title">
+<p>Example</p>
+<p><a class="admonition-anchor-link" href="getting_started/web_yew.html#admonition-example"></a></p>
+</div>
+<div>
+<p>There are several <a href="https://github.com/redbadger/crux/tree/master/examples">examples</a> of Yew apps in the Crux repository.</p>
+<p>However, the simplest example is the <a href="https://github.com/redbadger/crux/tree/master/examples/hello_world">Hello World counter example</a> — it only has <code>shared</code> and <code>shared_types</code> libraries, which will work with the following example code.</p>
+</div>
+</div>
+<p>Edit <code>src/main.rs</code> to look like this:</p>
+<pre><code class="language-rust noplayground">use bcs::{from_bytes, to_bytes};
+use yew::prelude::*;
+
+use shared::{Effect, Event, Request, ViewModel};
+
+#[derive(Default)]
+struct RootComponent;
+
+enum CoreMessage {
+    Event(Event),
+}
+
+impl Component for RootComponent {
+    type Message = CoreMessage;
+    type Properties = ();
+
+    fn create(_ctx: &amp;Context&lt;Self&gt;) -&gt; Self {
+        Self::default()
+    }
+
+    fn update(&amp;mut self, _ctx: &amp;Context&lt;Self&gt;, msg: Self::Message) -&gt; bool {
+        let reqs = match msg {
+            CoreMessage::Event(event) =&gt; shared::process_event(&amp;to_bytes(&amp;event).unwrap()),
+        };
+
+        let reqs: Vec&lt;Request&lt;Effect&gt;&gt; = from_bytes(&amp;reqs).unwrap();
+
+        let mut should_render = false;
+
+        for Request { uuid: _, effect } in reqs {
+            match effect {
+                Effect::Render(_) =&gt; should_render = true,
+            }
+        }
+
+        should_render
+    }
+
+    fn view(&amp;self, ctx: &amp;Context&lt;Self&gt;) -&gt; Html {
+        let link = ctx.link();
+        let view = shared::view();
+        let view: ViewModel = from_bytes(&amp;view).unwrap();
+
+        html! {
+            &lt;&gt;
+                &lt;section class=&quot;box container has-text-centered m-5&quot;&gt;
+                    &lt;p class=&quot;is-size-5&quot;&gt;{&amp;view.count}&lt;/p&gt;
+                    &lt;div class=&quot;buttons section is-centered&quot;&gt;
+                        &lt;button class=&quot;button is-primary is-danger&quot;
+                            onclick={link.callback(|_| CoreMessage::Event(Event::Reset))}&gt;
+                            {&quot;Reset&quot;}
+                        &lt;/button&gt;
+                        &lt;button class=&quot;button is-primary is-success&quot;
+                            onclick={link.callback(|_| CoreMessage::Event(Event::Increment))}&gt;
+                            {&quot;Increment&quot;}
+                        &lt;/button&gt;
+                        &lt;button class=&quot;button is-primary is-warning&quot;
+                            onclick={link.callback(|_| CoreMessage::Event(Event::Decrement))}&gt;
+                            {&quot;Decrement&quot;}
+                        &lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/section&gt;
+            &lt;/&gt;
+        }
+    }
+}
+
+fn main() {
+    yew::Renderer::&lt;RootComponent&gt;::new().render();
+}</code></pre>
+<h2 id="build-and-serve-our-app-1"><a class="header" href="#build-and-serve-our-app-1">Build and serve our app</a></h2>
+<p>The easiest way to compile the app to WebAssembly and serve it in our web page is to use <a href="https://trunkrs.dev/"><code>trunk</code></a>, which we can install with <a href="https://brew.sh/">Homebrew</a> (<code>brew install trunk</code>) or Cargo (<code>cargo install trunk</code>).</p>
+<p>We can build our app, serve it and open it in our browser, in one simple step.</p>
+<pre><code class="language-sh">trunk serve --open
+</code></pre>
+<div id="admonition-success" class="admonition success">
+<div class="admonition-title">
+<p>Success</p>
+<p><a class="admonition-anchor-link" href="getting_started/web_yew.html#admonition-success"></a></p>
+</div>
+<div>
+<p>Your app should look like this:</p>
+<p align="center"><img alt="hello world app" src="getting_started/./hello_world_yew.webp"  width="300"></p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="hello-world"><a class="header" href="#hello-world">Hello world</a></h1>
+<p>As the first step, we will build a simple application, starting with a classic Hello World, adding some state, and finally a remote API call. We will focus on the core, rely on tests to tell us things work, and return to the shell a little later, so unfortunately there won't be much to see until then.</p>
+<p>If you want to follow along, you should start by following the <a href="guide/../getting_started/core.html">Shared core and types</a>, guide to set up the project.</p>
+<h2 id="creating-an-app"><a class="header" href="#creating-an-app">Creating an app</a></h2>
+<p>To start with, we need a <code>struct</code> to be the root of our app.</p>
+<pre><code class="language-rust noplayground">#[derive(Default)]
+pub struct Hello;</code></pre>
+<p>We need to implement <code>Default</code> so that Crux can construct the app for us.</p>
+<p>To turn it into an app, we need to implement the <code>App</code> trait from the <code>crux_core</code> crate.</p>
+<pre><code class="language-rust noplayground">use crux_core::App;
+
+#[derive(Default)]
+pub struct Model;
+
+impl App for Hello {</code></pre>
+<p>If you're following along, the compiler is now screaming at you that you're missing four associated types for the trait: <code>Event</code>, <code>Model</code>, <code>ViewModel</code> and <code>Capabilities</code>.</p>
+<p>Capabilities is the more complicated of them, and to understand what it does, we need to talk about what makes Crux different from most UI frameworks.</p>
+<h2 id="side-effects-and-capabilities"><a class="header" href="#side-effects-and-capabilities">Side-effects and capabilities</a></h2>
+<p>One of the key design choices in Crux is that the Core is free of side-effects (besides its internal state). Your application can never <em>perform</em> anything that directly interacts with the environment around it - no network calls, no reading/writing files, and (somewhat obviously) not even updating the screen. Actually <em>doing</em> all those things is the job of the Shell, the core can only <em>ask</em> for them to be done.</p>
+<p>This makes the core portable between platforms, and, importantly, really easy to test. It also separates the intent, the &quot;functional&quot; requirements, from the implementation of the side-effects and the &quot;non-functional&quot; requirements (NFRs). For example, your application knows it wants to store data in a SQL database, but it doesn't need to know or care whether that database is local or remote. That decision can even change as the application evolves, and be different on each platform. If you want to understand this better before we carry on, you can read a lot more about how side-effects work in Crux in the chapter on <a href="guide/./capabilities.html">capabilities</a>.</p>
+<p>To <em>ask</em> the Shell for side effects, it will need to know what side effects it needs to handle, so we will need to declare them (as an enum). <em>Effects</em> are simply messages describing what should happen, and for more complex side-effects (e.g. HTTP), they would be too unwieldy to create by hand, so to help us create them, Crux provides <em>capabilities</em> - reusable libraries which give us a nice API for requesting side-effects. We'll look at them in a lot more detail later.</p>
+<p>Let's start with the basics:</p>
+<pre><code class="language-rust noplayground">use crux_core::render::Render;
+
+pub struct Capabilities {
+    render: Render&lt;Event&gt;,
+}</code></pre>
+<p>As you can see, for now, we will use a single capability, <code>Render</code>, which is built into Crux and available from the <code>crux_core</code> crate. It simply tells the shell to update the screen using the latest information.</p>
+<p>That means the core can produce a single <code>Effect</code>. It will soon be more than one, so we'll wrap it in an enum to give ourselves space. The <code>Effect</code> enum corresponds one to one to the <code>Capabilities</code> we're using, and rather than typing it (and its associated trait implementations) by hand and open ourselves to unnecessary mistakes, we can use the <code>Effect</code> derive macro from the <code>crux_macros</code> crate.</p>
+<pre><code class="language-rust noplayground">use crux_core::{render::Render};
+use crux_macros::Effect;
+
+#[derive(Effect)]
+#[effect(app = &quot;Hello&quot;)]
+pub struct Capabilities {
+    render: Render&lt;Event&gt;,
+}</code></pre>
+<p>Other than the <code>derive</code> itself, we also need to link the effect to our app. We'll go into the detail of why that is in the <a href="guide/capabilities.html">Capabilities</a> section, but the basic reason is that capabilities need to be able to send the app the outcomes of their work.</p>
+<p>You probably also noticed the <code>Event</code> type which capabilities are generic over, because they need to know the type which defines messages they can send back to the app. The same type is also used by the Shell to forward any user interactions to the Core, and in order to pass across the FFI boundary, it needs to be serializable. The resulting code will end up looking like this:</p>
+<pre><code class="language-rust noplayground">use crux_core::{render::Render, App};
+use crux_macros::Effect;
+use serde::{Deserialize, Serialize};
+
+#[derive(Effect)]
+#[effect(app = &quot;Hello&quot;)]
+pub struct Capabilities {
+    render: Render&lt;Event&gt;,
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum Event {
+    None, // we can't instantiate an empty enum, so let's have a dummy variant for now
+}
+
+#[derive(Default)]
+pub struct Hello;
+
+impl App for Hello { ... }</code></pre>
+<p>Okay, that took a little bit of effort, but with this short detour out of the way and foundations in place, we can finally create an app and start implementing some behavior.</p>
+<h2 id="implementing-the-app-trait"><a class="header" href="#implementing-the-app-trait">Implementing the <code>App</code> trait</a></h2>
+<p>We now have almost all the building blocks to implement the <code>App</code> trait. We're just missing two simple types. First, a <code>Model</code> to keep our app's state, it makes sense to make that a struct. It needs to implement <code>Default</code>, which gives us an opportunity to set up any initial state the app might need. Second, we need a <code>ViewModel</code>, which is a representation of what the user should see on screen. It might be tempting to represent the state and the view with the same type, but in more complicated cases it will be too constraining, and probably non-obvious what data are for internal bookkeeping and what should end up on screen, so Crux separates the concepts. Nothing stops you using the same type for both <code>Model</code> and <code>ViewModel</code> if your app is simple enough.</p>
+<p>We'll start with a few simple types for events, model and view model.</p>
+<p>Now we can finally implement the trait with its two methods, <code>update</code> and <code>view</code>.</p>
+<pre><code class="language-rust noplayground">use crux_core::{render::Render, App};
+use crux_macros::Effect;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+pub enum Event {
+    None,
+}
+
+#[derive(Default)]
+pub struct Model;
+
+#[derive(Serialize, Deserialize)]
+pub struct ViewModel {
+    data: String,
+}
+
+#[derive(Effect)]
+#[effect(app = &quot;Hello&quot;)]
+pub struct Capabilities {
+    render: Render&lt;Event&gt;,
+}
+
+#[derive(Default)]
+pub struct Hello;
+
+impl App for Hello {
+    type Event = Event;
+    type Model = Model;
+    type ViewModel = ViewModel;
+    type Capabilities = Capabilities;
+
+    fn update(&amp;self, _event: Self::Event, _model: &amp;mut Self::Model, caps: &amp;Self::Capabilities) {
+        caps.render.render();
+    }
+
+    fn view(&amp;self, _model: &amp;Self::Model) -&gt; Self::ViewModel {
+        ViewModel {
+            data: &quot;Hello World&quot;.to_string(),
+        }
+    }
+}</code></pre>
+<p>The <code>update</code> function is the heart of the app. It responds to events by (optionally) updating the state and requesting some effects by using the capability's APIs.</p>
+<p>All our <code>update</code> function does is ignore all its arguments and ask the Shell to render the screen. It's a hello world after all.</p>
+<p>The <code>view</code> function returns the representation of what we want the Shell to show on screen. And true to form, it returns an instance of the <code>ViewModel</code> struct containing <code>Hello World!</code>.</p>
+<p>That's a working hello world done, lets try it. As we said at the beginning, for now we'll do it from tests. It may sound like a concession, but in fact, this is the intended way for apps to be developed with Crux - from inside out, with unit tests, focusing on behavior first and presentation later, roughly corresponding to doing the user experience first, then the visual design.</p>
+<p>Here's our test:</p>
+<pre><code class="language-rust noplayground">#[cfg(test)]
+mod tests {
+    use super::*;
+    use crux_core::{render::RenderOperation, testing::AppTester};
+
+    #[test]
+    fn hello_says_hello_world() {
+        let hello = AppTester::&lt;Hello, _&gt;::default();
+        let mut model = Model::default();
+
+        // Call 'update' and request effects
+        let update = hello.update(Event::None, &amp;mut model);
+
+        // Check update asked us to `Render`
+        let actual_effect = &amp;update.effects[0];
+        let expected_effect = &amp;Effect::Render(RenderOperation);
+        assert_eq!(actual_effect, expected_effect);
+
+        // Make sure the view matches our expectations
+        let actual_view = &amp;hello.view(&amp;mut model);
+        let expected_view = &quot;Hello World&quot;;
+        assert_eq!(actual_view, expected_view);
+    }
+}</code></pre>
+<p>It is a fairly underwhelming test, but it should pass (check with <code>cargo test</code>). The test uses a testing helper from <code>crux_core::testing</code> that lets us easily interact with the app, inspect the effects it requests and its state, without having to set up the machinery every time. It's not exactly complicated, but it's a fair amount of boiler plate code.</p>
+<h2 id="counting-up-and-down"><a class="header" href="#counting-up-and-down">Counting up and down</a></h2>
+<p>Let's make things more interesting and add some behaviour. We'll teach the app to count up and down. First, we'll need a model, which represents the state. We could just make our model a number, but we'll go with a struct instead, so that we can easily add more state later.</p>
+<pre><code class="language-rust noplayground">#[derive(Default)]
+struct Model {
+    count: isize,
+}</code></pre>
+<p>We need <code>Default</code> implemented to define the initial state. For now we derive it, as our state is quite simple. We also update the app to show the current count:</p>
+<pre><code class="language-rust noplayground">impl App for Hello {
+// ...
+
+    type Model = Model;
+
+// ...
+
+    fn view(&amp;self, model: &amp;Self::Model) -&gt; Self::ViewModel {
+        format!(&quot;Count is: {}&quot;, model.count)
+    }
+}</code></pre>
+<p>We'll also need a simple <code>ViewModel</code> struct to hold the data that the Shell will render.</p>
+<pre><code class="language-rust noplayground">#[derive(Serialize, Deserialize)]
+pub struct ViewModel {
+    count: String,
+}</code></pre>
+<p>Great. All that's left is adding the behaviour. That's where <code>Event</code> comes in:</p>
+<pre><code class="language-rust noplayground">#[derive(Serialize, Deserialize)]
+enum Event {
+    Increment,
+    Decrement,
+    Reset,
+}</code></pre>
+<p>The event type covers all the possible events the app can respond to. &quot;Will that not get massive really quickly??&quot; I hear you ask. Don't worry about that, there is <a href="guide/./composing.html">a nice way to make this scale</a> and get reuse as well. Let's carry on. We need to actually handle those messages.</p>
+<pre><code class="language-rust noplayground">impl App for Hello {
+    type Event = Event;
+    type Model = Model;
+    type ViewModel = ViewModel;
+    type Capabilities = Capabilities;
+
+    fn update(&amp;self, event: Self::Event, model: &amp;mut Self::Model, caps: &amp;Self::Capabilities) {
+        match event {
+            Event::Increment =&gt; model.count += 1,
+            Event::Decrement =&gt; model.count -= 1,
+            Event::Reset =&gt; model.count = 0,
+        };
+
+        caps.render.render();
+    }
+
+    fn view(&amp;self, model: &amp;Self::Model) -&gt; Self::ViewModel {
+        ViewModel {
+            count: format!(&quot;Count is: {}&quot;, model.count),
+        }
+    }
+}
+// ...</code></pre>
+<p>Pretty straightforward, we just do what we're told, update the state, and then tell the Shell to render. Lets update the tests to check everything works as expected.</p>
+<pre><code class="language-rust noplayground">#[cfg(test)]
+mod test {
+    use super::*;
+    use crux_core::{render::RenderOperation, testing::AppTester};
+
+    #[test]
+    fn renders() {
+        let app = AppTester::&lt;Hello, _&gt;::default();
+        let mut model = Model::default();
+
+        let update = app.update(Event::Reset, &amp;mut model);
+
+        // Check update asked us to `Render`
+        let actual_effect = &amp;update.effects[0];
+        let expected_effect = &amp;Effect::Render(RenderOperation);
+        assert_eq!(actual_effect, expected_effect);
+    }
+
+    #[test]
+    fn shows_initial_count() {
+        let app = AppTester::&lt;Hello, _&gt;::default();
+        let mut model = Model::default();
+
+        let actual_view = app.view(&amp;mut model);
+        let expected_view = &quot;Count is: 0&quot;;
+        assert_eq!(actual_view, expected_view);
+    }
+
+    #[test]
+    fn increments_count() {
+        let app = AppTester::&lt;Hello, _&gt;::default();
+        let mut model = Model::default();
+
+        app.update(Event::Increment, &amp;mut model);
+
+        let actual_view = app.view(&amp;mut model);
+        let expected_view = &quot;Count is: 1&quot;;
+        assert_eq!(actual_view, expected_view);
+    }
+
+    #[test]
+    fn decrements_count() {
+        let app = AppTester::&lt;Hello, _&gt;::default();
+        let mut model = Model::default();
+
+        app.update(Event::Decrement, &amp;mut model);
+
+        let actual_view = app.view(&amp;mut model);
+        let expected_view = &quot;Count is: -1&quot;;
+        assert_eq!(actual_view, expected_view);
+    }
+
+    #[test]
+    fn resets_count() {
+        let app = AppTester::&lt;Hello, _&gt;::default();
+        let mut model = Model::default();
+
+        app.update(Event::Increment, &amp;mut model);
+        app.update(Event::Reset, &amp;mut model);
+
+        let actual_view = app.view(&amp;mut model);
+        let expected_view = &quot;Count is: 0&quot;;
+        assert_eq!(actual_view, expected_view);
+    }
+
+    #[test]
+    fn counts_up_and_down() {
+        let app = AppTester::&lt;Hello, _&gt;::default();
+        let mut model = Model::default();
+
+        app.update(Event::Increment, &amp;mut model);
+        app.update(Event::Reset, &amp;mut model);
+        app.update(Event::Decrement, &amp;mut model);
+        app.update(Event::Increment, &amp;mut model);
+        app.update(Event::Increment, &amp;mut model);
+
+        let actual_view = app.view(&amp;mut model);
+        let expected_view = &quot;Count is: 1&quot;;
+        assert_eq!(actual_view, expected_view);
+    }
+}</code></pre>
+<p>Hopefully those all pass. We are now sure that when we build an actual UI for this, it will <em>work</em>, and we'll be able to focus on making it looking delightful.</p>
+<p>In more complicated cases, it might be helpful to inspect the <code>model</code> directly. It's up to you to make the call of which one is more appropriate, in some sense it's the difference between black-box and white-box testing, so you should probably be doing both to get the confidence you need that your app is working.</p>
+<h2 id="remote-api"><a class="header" href="#remote-api">Remote API</a></h2>
+<p>Before we dive into the thinking behind the architecture, let's add one more feature - a remote API call - to get a better feel for how side-effects and capabilities work.</p>
+<p>We'll add a simple integration with a counter API we've prepared at <a href="https://crux-counter.fly.dev">https://crux-counter.fly.dev</a>. All it does is count up an down like our local counter. It supports three requests</p>
+<ul>
+<li><code>GET /</code> returns the current count</li>
+<li><code>POST /inc</code> increments the counter</li>
+<li><code>POST /dec</code> decrements the counter</li>
+</ul>
+<p>All three API calls return the state of the counter in JSON, which looks something like this</p>
+<pre><code class="language-json">{
+  &quot;value&quot;: 34,
+  &quot;updated_at&quot;: 1673265904973
+}
+</code></pre>
+<p>We can represent that with a struct and use Serde for the serialization, and we'll need to update the model as well. We'll also update the count optimistically and keep track of when the server confirmed it (there are other ways to model these semantics, but let's keep it straightforward for now).</p>
+<pre><code class="language-rust noplayground">#[derive(Default)]
+pub struct Model {
+    count: Counter,
+    confirmed: Option&lt;bool&gt;,
+}
+
+#[derive(Serialize, Deserialize, Default, Debug, PartialEq, Eq)]
+pub struct Counter {
+    value: isize,
+    updated_at: i64,
+}</code></pre>
+<p>We also need to update the view function to display the new data. To work with the date, we'll use <code>chrono</code></p>
+<pre><code class="language-rust noplayground">use chrono::{DateTime, NaiveDateTime, Utc};
+
+...
+
+fn view(&amp;self, model: &amp;Self::Model) -&gt; Self::ViewModel {
+    let updated_at = DateTime::&lt;Utc&gt;::from_utc(
+        NaiveDateTime::from_timestamp_millis(model.count.updated_at).unwrap(),
+        Utc,
+    );
+    let suffix = match model.confirmed {
+        Some(true) =&gt; format!(&quot; ({})&quot;, updated_at),
+        Some(false) =&gt; &quot; (pending)&quot;.to_string(),
+        None =&gt; &quot;Loading...&quot;.to_string(),
+    };
+
+    format!(&quot;{}{}&quot;, model.count.value.to_string(), &amp;suffix)
+}</code></pre>
+<p>You can see that the view function caters to three states - not knowing the count, having set a count but not having it confirmed, and having the count confirmed by the server.</p>
+<p>In a real-world app, it's likely that this information would be captured in a struct rather than converted to string inside the core, so that the UI can decide how to present it. The date formatting, however, is an example of something you may want to do consistently across all platforms and keep inside the Core. When making these choices, think about who's decisions they are, and do they need to be consistent across platforms or flexible. You will no doubt get a number of those calls wrong, but that's ok, the type system is here to help you refactor later and update the shells to work with the changes.</p>
+<p>We now have everything in place to update the <code>update</code> function. Let's start with thinking about the events. The API does not support resetting the counter, so that variant goes, but we need a new one to kick off fetching the current state of the counter. The Core itself can't autonomously start anything, it is always driven by the Shell, either by the user via the UI, or as a result of a side-effect.</p>
+<p>That gives us the following update function, with some placeholders:</p>
+<pre><code class="language-rust noplayground">fn update(&amp;self, event: Self::Event, model: &amp;mut Self::Model, caps: &amp;Self::Capabilities) {
+    match event {
+        Event::Get =&gt; {
+            // TODO &quot;GET /&quot;
+        }
+        Event::Set(_response) =&gt; {
+            // TODO Get the data and update the model
+            model.confirmed = Some(true);
+            caps.render.render();
+        }
+        Event::Increment =&gt; {
+            // optimistic update
+            model.count.value += 1;
+            model.confirmed = Some(false);
+            caps.render.render();
+
+            // real update
+            // TODO &quot;POST /inc&quot;
+        }
+        Event::Decrement =&gt; {
+            // optimistic update
+            model.count.value -= 1;
+            model.confirmed = Some(false);
+            caps.render.render();
+
+            // real update
+            // TODO &quot;POST /dec&quot;
+        }
+    }
+}</code></pre>
+<p>To request the respective HTTP calls, we'll use <a href="https://github.com/redbadger/crux/tree/master/crux_http"><code>crux_http</code></a> the built-in HTTP client. Since this is the first capability we're using, some things won't be immediately clear, but we should get there by the end of this chapter.</p>
+<p>The first thing to know is that the HTTP responses will be sent back to the update function as an event. That's what the <code>Event::Set</code> is for. The <code>Event</code> type looks as follows:</p>
+<pre><code class="language-rust noplayground">#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+pub enum Event {
+    Get,
+    #[serde(skip)]
+    Set(crux_http::Result&lt;crux_http::Response&lt;Counter&gt;&gt;),
+    Increment,
+    Decrement,
+}</code></pre>
+<p>We decorate the <code>Set</code> variant with <code>#[serde(skip)]</code> for two reasons: one, there's currently a technical limitation stopping us easily serializing <code>crux_http::Response</code>, and two, there's no reason that variant should never be sent by the Shell across the FFI boundary, which is the reason for the need to serialize in the first place — in a way, it is private to the Core.</p>
+<p>Finally, let's get rid of those TODOs. We'll need to add crux_http in the <code>Capabilities</code> type, so that the <code>update</code> function has access to it:</p>
+<pre><code class="language-rust noplayground">use crux_http::Http;
+
+#[derive(Effect)]
+pub struct Capabilities {
+    pub http: Http&lt;Event&gt;,
+    pub render: Render&lt;Event&gt;,
+}</code></pre>
+<p>This may seem like needless boilerplate, but it allows us to only use the capabilities we need and, more importantly, allow capabilities to be built by anyone. Later on, we'll also see that Crux apps <a href="guide/composing.html">compose</a>, relying on each app's <code>Capabilities</code> type to declare its needs, and making sure the necessary capabilities exist in the parent app.</p>
+<p>We can now implement those TODOs, so lets do it.</p>
+<pre><code class="language-rust noplayground">const API_URL: &amp;str = &quot;https://crux-counter.fly.dev&quot;;
+
+...
+
+fn update(&amp;self, event: Self::Event, model: &amp;mut Self::Model, caps: &amp;Self::Capabilities) {
+        match event {
+            Event::Get =&gt; {
+                caps.http
+                    .get(API_URL)
+                    .expect_json::&lt;Counter&gt;()
+                    .send(Event::Set);
+            }
+            Event::Set(Ok(mut counter)) =&gt; {
+                model.count = counter.take_body().unwrap();
+                model.confirmed = Some(true);
+                caps.render.render();
+            }
+            Event::Set(Err(_)) =&gt; {
+                panic!(&quot;Oh no something went wrong&quot;);
+            }
+            Event::Increment =&gt; {
+                // optimistic update
+                model.count.value += 1;
+                model.confirmed = Some(false);
+                caps.render.render();
+
+                // real update
+                let base = Url::parse(API_URL).unwrap();
+                let url = base.join(&quot;/inc&quot;).unwrap();
+                caps.http.post(url.as_str()).expect_json().send(Event::Set);
+            }
+            Event::Decrement =&gt; {
+                // optimistic update
+                model.count.value -= 1;
+                model.confirmed = Some(false);
+                caps.render.render();
+
+                // real update
+                let base = Url::parse(API_URL).unwrap();
+                let url = base.join(&quot;/dec&quot;).unwrap();
+                caps.http.post(url.as_str()).expect_json().send(Event::Set);
+            }
+        }
+    }
+</code></pre>
+<p>There's a few things of note. The first one is that the <code>.send</code> API at the end of each chain of calls to <code>crux_http</code> expects a function that wraps its argument (a <code>Result</code> of a http response) in a variant of <code>Event</code>. Fortunately, enum tuple variants create just such a function, and we can use it. The way to read the call is &quot;Send a get request, parse the response as JSON, which should be deserialized as a <code>Counter</code>, and then call me again with <code>Event::Set</code> carrying the result&quot;.</p>
+<p>The other thing of note is that the capability calls don't block. They queue up requests to send to the shell and execution continues immediately. The requests will be sent in the order they were queued and the asynchronous execution is the job of the shell.</p>
+<p>You can find the the complete example, including the shell implementations <a href="https://github.com/redbadger/crux/blob/master/examples/counter/">in the Crux repo</a>. It's interesting to take a closer look at the unit tests</p>
+<pre><code class="language-rust noplayground">#[test]
+fn get_counter() {
+    let app = AppTester::&lt;App, _&gt;::default();
+    let mut model = Model::default();
+
+    let update = app.update(Event::Get, &amp;mut model);
+
+    let actual = &amp;update.effects[0];
+    let expected = &amp;Effect::Http(HttpRequest {
+        method: &quot;GET&quot;.to_string(),
+        url: &quot;https://crux-counter.fly.dev/&quot;.to_string(),
+    });
+    assert_eq!(actual, expected);
+
+    let update = update.effects[0].resolve(&amp;HttpResponse {
+        status: 200,
+        body: serde_json::to_vec(&amp;Counter {
+            value: 1,
+            updated_at: 1,
+        })
+        .unwrap(),
+    });
+
+    let actual = update.events;
+    let expected = vec![Event::new_set(1, 1)];
+    assert_eq!(actual, expected);
+}
+
+#[test]
+fn set_counter() {
+    let app = AppTester::&lt;App, _&gt;::default();
+    let mut model = Model::default();
+
+    let update = app.update(Event::new_set(1, 1), &amp;mut model);
+
+    let actual = &amp;update.effects[0];
+    let expected = &amp;Effect::Render(RenderOperation);
+    assert_eq!(actual, expected);
+
+    let actual = model.count.value;
+    let expected = 1;
+    assert_eq!(actual, expected);
+
+    let actual = model.confirmed;
+    let expected = Some(true);
+    assert_eq!(actual, expected);
+}</code></pre>
+<p>You can see how easy it is to check that the app is requesting the right side effects, with the right arguments, and even test a chain of interactions and make sure the behavior is correct, all without mocking or stubbing anything or worrying about <code>async</code> code.</p>
+<p>In the next chapter, we can put the example into perspective and discuss the architecture it follows, inspired by Elm.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="elm-architecture"><a class="header" href="#elm-architecture">Elm Architecture</a></h1>
+<p>Now we've had a bit of a feel for what writing Crux apps is like, we'll add more context to the different components and the overall architecture of Crux apps. The architecture is heavily inspired by <a href="http://elm-lang.org">Elm</a>, and if you'd like to compare, the <a href="https://guide.elm-lang.org/architecture/">Architecture page of their guide</a> is an excellent starting point.</p>
+<h2 id="event-sourcing-as-a-model-for-ui"><a class="header" href="#event-sourcing-as-a-model-for-ui">Event Sourcing as a model for UI</a></h2>
+<p>User Interface is fundamentally event-driven. Unlike batch or stream processing, all changes in apps with UI are driven by events happening in the outside world, most commonly the user interface itself – the user touching the screen, typing on a keyboard, executing a CLI command, etc. In response, the app changes what's shown on the screen, starts an interaction with the outside world, or both.</p>
+<p>The Elm architecture is the simplest way of modeling this pattern in code. User interactions (along with other changes in the outside world, such as time passing) are represented by events, and in response to them, the app updates its internal state represented by a model. The link between them is a simple, pure function which takes the model and the event, and updates the model based on the events. The actual UI on screen is a direct projection of the model. Because there is virtually no other state in the app, the model must contain enough information to decide what should be on screen.</p>
+<p>What we're missing is for the app to be able to respond to events from the outside world by changing the outside world. While the app can run computations and keep state, in this simplistic model, it can't read or write files, draw on screen, connect to APIs over the network, etc. It can't perform side-effects. Conceptually, we need to extend the update function to not only mutate the model, but also to emit some side-effects (or just &quot;effects&quot; for short).</p>
+<p><img src="guide/../architecture.svg" alt="Logical architecture" /></p>
+<p><em>TODO a better picture focusing on the update function</em></p>
+<p>This more complete model is a function which takes an event and a model, and produces a new model and optionally some effects. This is still quite a simple and pure function, and is completely predictable, for the same inputs, it will always yield the same outputs, and that is a very important design choice.</p>
+<h2 id="ui-effects-and-testability"><a class="header" href="#ui-effects-and-testability">UI, effects and testability</a></h2>
+<p>User interface and effects are normally where testing gets very difficult. If the application logic can directly cause changes in the outside world (or input/output — I/O, in computer parlance), the only way to verify the logic completely is to look at the result of those changes. The results, however, are pixels on screen, elements in the DOM, packets going over the network and other complex, difficult to inspect and often short-lived things. The only viable strategy (in this direct scenario) to test them is to take the role of the particular device the app is working with, and pretending to be that device – a practice known as mocking (or stubbing, or faking, depending who you talk to). The APIs used to interact with these things are really complicated though, and even if you emulate them well, tests based on this approach won't be stable against changes in that API. When the API changes, your code <em>and</em> your tests will both have to change, taking any confidence they gave you in the first place with them. What's more, they also differ across platforms. Now we have that problem twice or more times.</p>
+<p>The problem is in how apps are normally written (when written in a direct, imperative style). When it comes time to perform an effect, the most straightforward code just performs it straight away. The solution, as usual, is to add indirection. What Crux does (inspired by Elm, Haskell and others) is <strong>separate the intent from the execution</strong>. Crux's effect approach focuses on capturing the intent of the effect, not the specific implementation of executing it. The intent is captured as data to benefit from type checking and from all the tools the language already provides for working with data. The business logic can stay pure, but express all the behaviour: state changes and effects. The intent is also the thing that needs to be tested. We can reasonably afford to trust that the authors of a HTTP client library, for example, have tested it and it does what it promises to do — all we need to check is that we're sending the right requests<sup class="footnote-reference"><a href="#testing">1</a></sup>.</p>
+<h2 id="executing-the-effects-the-runtime-shell"><a class="header" href="#executing-the-effects-the-runtime-shell">Executing the effects: the <del>runtime</del> Shell</a></h2>
+<p>In Elm, the responsibility to execute the requested effects falls on the Elm runtime. Crux is very similar, except both the app and (some of) the runtime is your responsibility. This means some more work, but it also means you only bring what you need and nothing more, both in terms of supported platforms and the necessary APIs.</p>
+<p>In Crux, business logic written in Rust is captured in the update function mentioned above and the other pieces that the function needs: events, model and effects, each represented by a type. This code forms a Core, which is portable, and really easily testable.</p>
+<p>The execution of effects, including drawing the user interface, is done in a native Shell. Its job is to draw the appropriate UI on screen, translate user interactions into events to send to the Core, and when requested, perform effects and return their outcomes back to the Core.</p>
+<p><img src="guide/../crux.png" alt="The two sides of the Shell" /></p>
+<p>The Shell thus has two sides: the <em>driving</em> side – the interactions causing events which push the Core to action, and the <em>driven</em> side, which services the Core's requests for side effects. Without being prompted by the Shell, the Core does nothing, it can't – with no other I/O, there are no other triggers which could cause the Core code to run. To the Shell, the Core is a simple library, providing some computation. From the perspective of the Core, the Shell is a platform the Core runs on.</p>
+<h2 id="capabilities-the-syntax-sugar-for-effects"><a class="header" href="#capabilities-the-syntax-sugar-for-effects">Capabilities: the syntax sugar for effects</a></h2>
+<p>Effects encode potentially quite complex, but common interactions, so they are the perfect candidate for some improved ergonomics in the APIs. This is where Crux capabilities come in. They provide a nicer API for creating effects, and in the future, they will likely provide implementations of the effect execution for the various supported platforms. Capabilities can also implement more complex interactions with the outside world, such as chained network API calls or processing results of effects, like parsing JSON API responses.</p>
+<p>We will look at how capabilities work, and will build our own in the next chapter.</p>
+<hr />
+<div class="footnote-definition" id="testing"><sup class="footnote-definition-label">1</sup>
+<p>In reality, we do need to check that at least one of our HTTP requests executes successfully, but once one does, it is very likely that so long as they are described correctly, all of them will.</p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="capabilities"><a class="header" href="#capabilities">Capabilities</a></h1>
+<p>In the last chapter, we spoke about Effects. In this one we'll look at the APIs your app will actually use to request them – the capabilities.</p>
+<p>Capabilities are reusable, platform agnostic APIs for a particular type of effect. They have two key jobs:</p>
+<ol>
+<li>Provide a nice ergonomic API for apps to use</li>
+<li>Manage the communication between the app and the Shell</li>
+</ol>
+<p>From the perspective of the app, you can think of capabilities as an equivalent to SDKs. And a lot of them will provide an interface to the actual platform specific SDKs.</p>
+<h2 id="intent-and-execution"><a class="header" href="#intent-and-execution">Intent and execution</a></h2>
+<p>The Capabilities are the key to Crux being portable across as many platforms as is sensible. Crux apps are, in a sense, built in the abstract, they describe <em>what</em> should happen in response to events, but not <em>how</em> it should happen. We think this is important both for portability, and for testing and general separation of concerns. What should happen is inherent to the product, and should behave the same way on any platform – it's part of what your app <em>is</em>. How it should be executed (and exactly what it looks like) often depends on the platform.</p>
+<p>Different platforms may support different ways, for example a biometric authentication may work very differently on various devices and some may not even support it at all, but it may also be a matter of convention. Different platforms may also have different practical restrictions: while it may be perfectly appropriate to write things to disk on one platform, but internet access can't be guaranteed (e.g. on a smart watch), on another, writing to disk may not be possible, but internet connection is virtually guaranteed (e.g. in an API service, or on an embedded device in a factory). A persistent caching capability would implement the specific storage solution differently on different platforms, but would potentially share the key format and eviction strategy across them. The hard part of designing a capability is working out exactly where to draw the line between what is the intent and what is the implementation detail, what's common across platforms and what may be different on each, and implementing the former in Rust in the capability and the latter on the native side in the Shell, however is appropriate.</p>
+<p>Because Capabilities can own the &quot;language&quot; used to express intent, and the interface to request the execution of the effect, your Crux application code can be portable onto any platform capable of executing the effect in some way. Clearly, the number of different effects we can think of, and platforms we can target is enormous, and Crux doesn't want to force you to implement the entire portfolio of them on every platform. That's why Capabilities are delivered as separate modules, typically in crates, and apps can declare which ones they need. The Shell implementations need to know how to handle all requests from those capabilities, but can choose to provide only stub implementations where appropriate. For example the <a href="https://github.com/redbadger/crux/tree/master/examples/cat_facts">Cat Facts example</a>, uses a key-value store capability for persisting the model after every interaction, which is crucial to make the CLI shell work statefully, but the other shells generally ignore the key-value requests, because state persistence across app launches is not crucial for them. The app itself (the Core) has no idea which is the case.</p>
+<p>In some cases, it may also make sense to implement an app-specific capability, for effects specific to your domain, which don't have a common implementation across platforms (e.g. registering a local user). Crux does not stop you from bundling a number of capabilities alongside your apps (i.e. they don't <em>have to</em> come from a crate). On the other hand, it might make sense to build a capability on top of an existing lower-level capability, for example a CRDT capability may use a general pub/sub capability as transport, or a specific protocol to speak to your synchronization server (e.g. over HTTP).</p>
+<p>There are clearly numerous scenarios, and the best rule of thumb we can think of is &quot;focus on the intent&quot;. Provide an API to describe the intent of side-effects and then either pass the intent straight to the shell, or translate it to a sequence of more concrete intents for the Shell to execute. And keep in mind that the more complex the intent sent to the shell, the more complex the implementation on each platform. The translation between high-level intent and low level building blocks is why Capabilities exist.</p>
+<h2 id="the-core-and-the-shell"><a class="header" href="#the-core-and-the-shell">The Core and the Shell</a></h2>
+<p>As we've already covered, the capabilities effectively straddle the FFI boundary between the Core and the Shell. On the Core side they mediate between the FFI boundary and the application code. On the shell-side the requests produced by the capability need to be actually executed and fulfilled. Each capability therefore extends the Core/Shell interface with a set of defined (and type checked) messages, in a way that allows Crux to leverage exhaustive pattern matching on the native side to ensure all necessary capabilities required by the Core are implemented.</p>
+<p>At the moment the Shell implementation is up to you, but we think in the future it's likely that capability crates will come with platform native code as well, making building both the Core and the Shells easier, and allow you to focus on application behaviour in the Core and look and feel in the Shell.</p>
+<h2 id="using-capabilities"><a class="header" href="#using-capabilities">Using Capabilities</a></h2>
+<p>Okay, time to get practical. We'll look at what it takes (and why) to use a capability, and in the next couple of chapters, we'll continue to build one and implement the Shell side of it.</p>
+<p>Firstly, we need to have access to an instance of the capability in our <code>update</code> function. Recall that the function signature is:</p>
+<pre><code class="language-rust noplayground">fn update(&amp;self, msg: Self::Event, model: &amp;mut Self::Model, caps: &amp;Self::Capabilities)</code></pre>
+<p>We get the capabilities in the <code>caps</code> argument. You may be wondering why that's necessary. At first glance, we could be able to just create a capability instance ourselves, or not need one at all, after all they just provide API to make effects. There are a few reasons.</p>
+<p>Firstly, capabilities need to be able to send a message to the shell, more precisely, they need to be able to add to the set of effects which result from the run of the update function. Sounds like a return value to you? It kind of is, and we tried that, and the type signatures involved quickly become quite unsightly. It's not the only reason though. They also need to be able to return information back to your app by queuing up events to be dispatched to the next run of the <code>update</code> function. But to be <em>really</em> useful, they need to be able to do a series of these things and suspend their execution in the meantime.</p>
+<p>In order to enable all that, Crux needs to be in charge of creating the instance of the capabilities to provide context to them, which they use to do the things we just listed. We'll see the details of this in the next chapter.</p>
+<p>Notice that the type of the argument is <code>Self::Capabilities</code> — you own the type. This is to allow you to declare which capabilities you want to use in your app. That type will most likely be a struct looking like the following:</p>
+<pre><code class="language-rust noplayground">#[derive(Effect)]
+pub struct Capabilities {
+    pub http: Http&lt;Event&gt;,
+    pub render: Render&lt;Event&gt;,
+}</code></pre>
+<p>Those two types come from <code>crux_core</code> and <code>crux_http</code>. Two things are suspicious about the above — the <code>Event</code> type, which describes your app's events and the <code>#[derive(Effect)]</code> derive macro.</p>
+<p>The latter generates an <code>Effect</code> enum for you, used as the payload of the messages to the Shell. It is one of the things you will need to expose via the FFI boundary. It's the type the Shell will use to understand what is being requested from it, and it mirrors the <code>Capabilities</code> struct: for each field, there is a tuple variant in the Effect enum, with the respective capability's <em>request</em> as payload, i.e. the data describing what's being asked of the Shell.</p>
+<p>The <code>Event</code> type argument enables the &quot;shell side&quot; of these capabilities to send you your specific events back as the <em>outcome</em> of their work. Typically, you'd probably set up an <code>Event</code> variant specifically for the individual uses of each capability, like this:</p>
+<pre><code class="language-rust noplayground">#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+pub enum Event {
+    Hello,
+    #[serde(skip)]
+    Set(crux_http::Result&lt;crux_http::Response&lt;Counter&gt;&gt;), // &lt;- this
+}</code></pre>
+<p>In a real app, you'd likely have more than one interaction with a HTTP server, and would most likely need one variant for each. (<code>#[serde(skip)]</code> in the above code hides the variant from the type exposed to the Shell for direct calls – this event should not be dispatched directly. The other reason for it also has to do with serialization difficulties, which we'll eventually iron out).</p>
+<p>That's it for linking the capability into our app, now we can use it in the <code>update</code> function:</p>
+<pre><code class="language-rust noplayground">    fn update(&amp;self, msg: Self::Event, model: &amp;mut Self::Model, caps: &amp;Self::Capabilities) {
+        match msg {
+            Event::Get =&gt; {
+                caps.http
+                    .get(API_URL)
+                    .expect_json::&lt;Counter&gt;()
+                    .send(Event::Set);
+
+                caps.render.render();
+            }
+    // ...</code></pre>
+<p>You can see the use of the <code>Event::Set</code> variant we just discussed. <code>Event::Set</code> is technically a function with this signature:</p>
+<pre><code class="language-rust noplayground">fn Event::Set(crux_http::Result&lt;crux_http::Response&lt;Counter&gt;) -&gt; Event</code></pre>
+<p>Looks a lot like a callback, doesn't it. Yep. With the difference that the result is an <code>Event</code>. Generally, you should be able to completely ignore this detail and just use your variant names and the code should read pretty clearly: &quot;When done, send me <code>Event::Set</code>&quot;.</p>
+<p>The other nuance to be aware of is that the capability calls return immediately. This should hopefully be relatively obvious by now, but all that's happening is effects are getting queued up to be requested from the Shell. In a way, capability calls are implicitly asynchronous (but you can't await them).</p>
+<p>That's generally all there is to it. What you'll notice is that most capabilities have essentially request/response semantics — you use their APIs, and provide an event you want back, and eventually your update function will get called with that event. Most capabilities take inputs for their effect, and return output in their outcomes, but some capabilities don't do one or either of those things. Render is an example of a capability which doesn't take payload and never calls back. You'll likely see all the different variations in Crux apps.</p>
+<p>Now that we know how to use capabilities, we're ready to look at building our own ones. You may never need to do that, or it might be one of the first hurdles you'll come across (and if we're honest, given how young Crux is, it's more likely the latter). Either way, it's what we'll do in the next chapter.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="capability-apis"><a class="header" href="#capability-apis">Capability APIs</a></h1>
+<p>In the previous chapter, we looked at the purpose of Capabilities and using them in Crux apps. In this one, we'll go through building our own. It will be a simple one, but real enough to show the key parts.</p>
+<p>We'll extend the Counter example we've built in the <a href="guide/hello_world.html">Hello World</a> chapter and make it <em>worse</em>. Intentionally. We'll add a random delay before we actually update the counter, just to annoy the user (please don't do that in your real apps). It is a silly example, but it will allow us to demonstrate a few things:</p>
+<ul>
+<li>Random numbers, current time and delay are also side-effects</li>
+<li>To introduce a random delay, we will need to chain two effects behind a single capability call</li>
+<li>The capability can also offer specific time delay API and we can show how capabilities with multiple <em>operations</em> work.</li>
+</ul>
+<p>In fact, let's start with that.</p>
+<h2 id="basic-delay-capability"><a class="header" href="#basic-delay-capability">Basic delay capability</a></h2>
+<p>The first job of our capability will be to pause for a given number of milliseconds and then send an event to the app.</p>
+<p>There's a number of types and traits we will need to implement to make the capability work with the rest of Crux, so let's quickly go over them before we start. We will need</p>
+<ul>
+<li>The capability itself, able to hold on to the context used to interact with Crux</li>
+<li>The payload type for the effect, holding the number of milliseconds requested</li>
+<li>Implementation of the <code>Capability</code> trait</li>
+</ul>
+<p>Let's start with the payload:</p>
+<pre><code class="language-rust noplayground">#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct DelayOperation {
+    millis: usize
+}</code></pre>
+<p>The request is just a named type holding onto a number. It will need to cross the FFI boundary, which is why it needs to be serializable, cloneable, etc.</p>
+<p>We will need our request to implement the <code>Operation</code> trait, which links it with the type of the response we expect back. In our case we expect a response, but there is no data, so we'll use the unit type.</p>
+<pre><code class="language-rust noplayground">use crux_core::capability::Operation;
+
+impl Operation for DelayOperation {
+    type Output = ();
+}</code></pre>
+<p>Now we can implement the capability:</p>
+<pre><code class="language-rust noplayground">use crux_core::capability::CapabilityContext;
+
+struct Delay&lt;Ev&gt; {
+    context: CapabilityContext&lt;DelayOperation, Ev&gt;,
+}
+
+impl&lt;Ev&gt; Delay&lt;Ev&gt;
+where
+    Ev: 'static,
+{
+    pub fn new(context: CapabilityContext&lt;DelayOperation, Ev&gt;) -&gt; Self {
+        Self { context }
+    }
+
+    pub fn milliseconds(&amp;self, millis: usize, event: Ev) {
+        let ctx = self.context.clone();
+        self.context.spawn(async move {
+            ctx.request_from_shell(DelayOperation { millis }).await;
+
+            ctx.update_app(event);
+        });
+    }
+}</code></pre>
+<p>There's a fair bit going on. The capability is generic over an event type <code>Ev</code> and holds on to a <code>CapabilityContext</code>. The constructor will be called by Crux when starting an application that uses this capability.</p>
+<p>The <code>milliseconds</code> method is our capability's public API. It takes the delay in milliseconds and the event to send back. In this case, we don't expect any payload to return, so we take the <code>Ev</code> type directly. We'll shortly see what an event with data looks like as well.</p>
+<p>The implementation of the method has a little bit of boilerplate to enable us to use <code>async</code> code. First we clone the context to be able to use it in the async block. Then we use the context to spawn an <code>async move</code> code block in which we'll be able to use <code>async</code>/<code>await</code>. This bit of code will be the same in every part of your capability that needs to interact with the Shell.</p>
+<p>You can see we use two APIs to orchestrate the interaction. First <code>request_from_shell</code> sends the delay operation we made earlier to the Shell. This call returns a future, which we can <code>.await</code>. Once done, we use the other API <code>update_app</code> to dispatch the event we were given. At the <code>.await</code>, the task will be suspended, Crux will pass the operation to the Shell wrapped in the <code>Effect</code> type we talked about in the last chapter and the Shell will use it's native APIs to wait for the given duration, and eventually respond. This will wake our task up again and we can continue working.</p>
+<div id="admonition-sharp-edge" class="admonition warning">
+<div class="admonition-title">
+<p>Sharp edge</p>
+<p><a class="admonition-anchor-link" href="guide/capability_apis.html#admonition-sharp-edge"></a></p>
+</div>
+<div>
+<p>There is one more thing we need to do, which will likely be reduced to a derive macro in future versions of Crux. We need to implement the <code>Capability</code> trait.</p>
+</div>
+</div>
+<pre><code class="language-rust noplayground">impl&lt;Ef&gt; Capability&lt;Ef&gt; for Delay&lt;Ef&gt; {
+    type Operation = DelayOperation;
+    type MappedSelf&lt;MappedEv&gt; = Delay&lt;MappedEv&gt;;
+
+    fn map_event&lt;F, NewEvent&gt;(&amp;self, f: F) -&gt; Self::MappedSelf&lt;NewEvent&gt;
+    where
+        F: Fn(NewEvent) -&gt; Ef + Send + Sync + Copy + 'static,
+        Ef: 'static,
+        NewEvent: 'static,
+    {
+        Delay::new(self.context.map_event(f))
+    }
+}</code></pre>
+<p>What on earth is that for, you ask? This allows you to derive an instance of the <code>Delay</code> capability from an existing one and adapt it to a different <code>Event</code> type. Yes, we know, don't read that sentence again. This will be useful to allow composing Crux apps from smaller Crux apps to automatically wrap the child events in the parent events.</p>
+<p>We will cover this in depth in the chapter about <a href="guide/./composing.html">Composable applications</a>.</p>
+<h2 id="random-delays"><a class="header" href="#random-delays">Random delays</a></h2>
+<p>To make the example more contrived, but also more educational, we'll add the random delay ability. This will</p>
+<ul>
+<li>Request a random number within given limits from the shell</li>
+<li>Then request the shell to delay by that number</li>
+<li>Then update the application, passing the number along, in case it is needed</li>
+</ul>
+<p>First off, we need to add the new operation in. Here we have a choice, we can add a random delay operation, or we can add a random number generation operation and compose the two building blocks ourselves. We'll go for the second option because... well because this is an example.</p>
+<p>Since we have multiple operations now, let's make our operation an enum</p>
+<pre><code class="language-rust noplayground">#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub enum DelayOperation {
+    GetRandom(usize, usize),
+    Delay(usize),
+}</code></pre>
+<p>We now also need an output type:</p>
+<pre><code class="language-rust noplayground">#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub enum DelayOutput {
+    Random(usize),
+    TimeUp
+}</code></pre>
+<p>And that changes the <code>Operation</code> trait implementation:</p>
+<pre><code class="language-rust noplayground">impl Operation for DelayOperation {
+    type Output = DelayOutput;
+}</code></pre>
+<p>The updated implementation looks like the following:</p>
+<pre><code class="language-rust noplayground">impl&lt;Ev&gt; Delay&lt;Ev&gt;
+where
+    Ev: 'static,
+{
+    pub fn new(context: CapabilityContext&lt;DelayOperation, Ev&gt;) -&gt; Self {
+        Self { context }
+    }
+
+    pub fn milliseconds(&amp;self, millis: usize, event: Ev) {
+        let ctx = self.context.clone();
+        self.context.spawn(async move {
+            ctx.request_from_shell(DelayOperation::Delay(millis)).await; // Changed
+
+            ctx.update_app(event);
+        });
+    }
+
+    pub fn random&lt;F&gt;(&amp;self, min: usize, max: usize, event: F)
+    where F: Fn(usize) -&gt; Ev
+    {
+        let ctx = self.context.clone();
+        self.context.spawn(async move {
+            let response = ctx.request_from_shell(DelayOperation::GetRandom(min, max)).await;
+
+            let DelayOutput::Random(millis) = response else {
+                panic!(&quot;Expected a random number&quot;)
+            };
+            ctx.request_from_shell(DelayOperation::Delay(millis)).await;
+
+            ctx.update_app(event(millis));
+        });
+    }
+}</code></pre>
+<p>In the new API, the event handling is a little different from the original. Because the event has a payload, we don't simply take an <code>Ev</code>, we need a function that returns <code>Ev</code>, if given the random number. Seems cumbersome but you'll see using it in the <code>update</code> function of our app is quite natural:</p>
+<pre><code class="language-rust noplayground">fn update(&amp;self, event: Self::Event, model: &amp;mut Self::Model, caps: &amp;Self::Capabilities) {
+        match event {
+            //
+            // ... Some events omitted
+            //
+            Event::Increment =&gt; {
+                caps.delay.random(200, 800, Event::DoIncrement);
+            }
+            Event::DoIncrement(_millis) =&gt; {
+                // optimistic update
+                model.count.value += 1;
+                model.confirmed = Some(false);
+                caps.render.render();
+
+                // real update
+                let base = Url::parse(API_URL).unwrap();
+                let url = base.join(&quot;/inc&quot;).unwrap();
+                caps.http.post(url.as_str()).expect_json().send(Event::Set);
+            }
+            Event::Decrement =&gt; {
+                caps.delay.milliseconds(500, Event::DoIncrement);
+            }
+            Event::DoDecrement =&gt; {
+                // optimistic update
+                model.count.value -= 1;
+                model.confirmed = Some(false);
+                caps.render.render();
+
+                // real update
+                let base = Url::parse(API_URL).unwrap();
+                let url = base.join(&quot;/dec&quot;).unwrap();
+                caps.http.post(url.as_str()).expect_json().send(Event::Set);
+            }
+        }
+    }</code></pre>
+<p>That is essentially it for the capabilities. You can check out the complete context API <a href="https://docs.rs/crux_core/latest/crux_core/capability/struct.CapabilityContext.html">in the docs</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="message-interface-between-core-and-shell"><a class="header" href="#message-interface-between-core-and-shell">Message interface between core and shell</a></h1>
+<p>So far in this book, we've been taking the perspective of being inside the core looking out. It feels like it's now time to be in the shell, looking in.</p>
+<div id="admonition-note" class="admonition note">
+<div class="admonition-title">
+<p>Note</p>
+<p><a class="admonition-anchor-link" href="guide/message_interface.html#admonition-note"></a></p>
+</div>
+<div>
+<p>Interestingly, we think this is also the way to approach building apps with Crux. For any one feature, start in the middle and get your behaviour established first. Write the tests without the UI and the other side-effects in the way. Give yourself maximum confidence that the feature works <em>exactly</em> as you expect before you muddy the water with UI components, and their look and feel.</p>
+</div>
+</div>
+<p>OK, let's talk about the shell.</p>
+<p>The shell only has two responsibilities:</p>
+<ol>
+<li>Laying out the UI components</li>
+<li>Supporting the app's capabilities</li>
+</ol>
+<p>We'll look at these separately. But first let's remind ourselves of how we interact with the core (now would be a good time to read <a href="guide/../getting_started/core.html">Shared core and types</a> if you haven't already).</p>
+<h2 id="the-message-protocol"><a class="header" href="#the-message-protocol">The message protocol</a></h2>
+<p>The interface is message based, and uses serialization to pass data back and forth. The core exports the types for all the data so that it can be used and created on the shell side with safety.</p>
+<p>An <code>Event</code> can be passed in directly, as-is. Processing of <code>Effect</code>s is a little more complicated, because the core needs to be able to pair the outcomes of the effects with the original capability call, so it can return them to the right caller. To do that, effects are wrapped in a <code>Request</code>, which tags them with a UUID. To respond, the same UUID needs to be passed back in.</p>
+<p>Requests from the core are emitted serialized, and need to be deserialized first. Both events and effect outputs need to be serialized before being passed back to the core.</p>
+<div id="admonition-sharp-edge" class="admonition warning">
+<div class="admonition-title">
+<p>Sharp edge</p>
+<p><a class="admonition-anchor-link" href="guide/message_interface.html#admonition-sharp-edge"></a></p>
+</div>
+<div>
+<p>It is likely that this will become an implementation detail and instead, Crux will provide a more ergonomic shell-side API for the interaction, hiding both the UUID pairing and the serialization (and allowing us to iterate on the FFI implementation which, we think, could work better).</p>
+</div>
+</div>
+<h2 id="the-core-interface"><a class="header" href="#the-core-interface">The core interface</a></h2>
+<p>There are only three touch-points with the core.</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn process_event(data: &amp;[u8]) -&gt; Vec&lt;u8&gt; { todo!() }
+pub fn handle_response(uuid: &amp;[u8], data: &amp;[u8]) -&gt; Vec&lt;u8&gt; { todo!() }
+pub fn view() -&gt; Vec&lt;u8&gt; { todo!() }
+<span class="boring">}</span></code></pre></pre>
+<p>The <code>process_event</code> function takes a serialized <code>Event</code> (from a UI interaction) and returns a serialized vector of <code>Request</code>s that the shell can dispatch to the relevant capability's shell-side code (see the section below on how the shell handles capabilities).</p>
+<p>The <code>handle_response</code> function, used to return capability output back into the core, is similar to <code>process_event</code> except that it also takes a <code>uuid</code>, which ties the output (for example a HTTP response) being submitted with it's original <code>Effect</code> which started it (and the corresponding request which the core wrapped it in).</p>
+<p>The <code>view</code> function simply retrieves the serialized view model (to which the UI is bound) and is called by the shell after it receives a <code>Render</code> request. The view model is a projection of the app's state – it reflects what information the Core wants displayed on screen.</p>
+<p>You're probably thinking, &quot;Whoa! I just see slices and vectors of bytes, where's the type safety?&quot;. Well, the answer is that we also generate all the types that pass through the bridge, for each language, along with serialization and deserialization helpers. This is done by the <code>serde-generate</code> crate (see the section on <a href="guide/../getting_started/core.html#create-the-shared-types-crate">Create the shared types crate</a>).</p>
+<div id="admonition-sharp-edge-1" class="admonition warning">
+<div class="admonition-title">
+<p>Sharp edge</p>
+<p><a class="admonition-anchor-link" href="guide/message_interface.html#admonition-sharp-edge-1"></a></p>
+</div>
+<div>
+<p>For now we have to manually invoke the serialization code in the shell. At some point this may be abstracted away.</p>
+</div>
+</div>
+<p>In this code snippet from the <a href="https://github.com/redbadger/crux/blob/master/examples/counter/Android/app/src/main/java/com/example/counter/MainActivity.kt">Counter example</a>, notice that we call <code>processEvent</code> and <code>handleResponse</code> on the core depending on whether we received an <code>Event</code> from the UI or from a capability, respectively. Regardless of which core function we call, we get back a bunch of requests, which we can iterate through and do the relevant thing (the following snippet triggers a render of the UI, or makes an HTTP call, or launches a task to wait for Server Sent Events, depending on what the core requested):</p>
+<pre><code class="language-kotlin">sealed class Outcome {
+    data class Http(val res: HttpResponse) : Outcome()
+    data class Sse(val res: SseResponse) : Outcome()
+}
+
+sealed class CoreMessage {
+    data class Event(val event: Evt) : CoreMessage()
+    data class Response(val uuid: List&lt;UByte&gt;, val outcome: Outcome) : CoreMessage()
+}
+
+class Model : ViewModel() {
+    var view: MyViewModel by mutableStateOf(MyViewModel(&quot;&quot;, false))
+        private set
+
+    suspend fun update(msg: CoreMessage) {
+        val requests: List&lt;Req&gt; =
+            when (msg) {
+                is CoreMessage.Event -&gt;
+                    Requests.bcsDeserialize(
+                        processEvent(msg.event.bcsSerialize().toUByteArray().toList())
+                            .toUByteArray()
+                            .toByteArray()
+                    )
+                is CoreMessage.Response -&gt;
+                    Requests.bcsDeserialize(
+                        handleResponse(
+                            msg.uuid.toList(),
+                            when (msg.outcome) {
+                                is Outcome.Http -&gt; msg.outcome.res.bcsSerialize()
+                                is Outcome.Sse -&gt; msg.outcome.res.bcsSerialize()
+                            }.toUByteArray().toList()
+                        ).toUByteArray().toByteArray()
+                    )
+            }
+
+        for (req in requests) when (val effect = req.effect) {
+            is Effect.Render -&gt; {
+                this.view = MyViewModel.bcsDeserialize(view().toUByteArray().toByteArray())
+            }
+            is Effect.Http -&gt; {
+                val response = http(httpClient, HttpMethod(effect.value.method), effect.value.url)
+                update(
+                    CoreMessage.Response(
+                        req.uuid.toByteArray().toUByteArray().toList(),
+                        Outcome.Http(response)
+                    )
+                )
+            }
+            is Effect.ServerSentEvents -&gt; {
+                viewModelScope.launch {
+                    sse(sseClient, effect.value.url) { event -&gt;
+                        update(
+                            CoreMessage.Response(
+                                req.uuid.toByteArray().toUByteArray().toList(),
+                                Outcome.Sse(event)
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+</code></pre>
+<h2 id="the-ui-components"><a class="header" href="#the-ui-components">The UI components</a></h2>
+<p>Crux can work with any platform-specific UI library. We think it works best with modern declarative UI frameworks such as <a href="https://developer.apple.com/xcode/swiftui/">SwiftUI</a> on iOS, <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a> on Android, and <a href="https://reactjs.org/">React</a>/<a href="https://vuejs.org/">Vue</a> or a Wasm based framework (like <a href="https://yew.rs/">Yew</a>) on the web.</p>
+<p>These frameworks are all pretty much identical. If you're familiar with one, you can work out the others easily. In the examples on this page, we'll work in an Android shell with Kotlin.</p>
+<p>The components are bound to the view model, and they send events to the core.</p>
+<p>We've already seen a &quot;hello world&quot; example when we were <a href="guide/../getting_started/android.html#create-some-ui-and-run-in-the-simulator">setting up an Android project</a>. Rather than print that out again here, we'll just look at how we need to enhance it to work with Kotlin coroutines. We'll probably need to do this with any real shell, because the update function that dispatches side effect requests from the core will likely need to be <code>suspend</code>.</p>
+<p>This is the <code>View</code> from the <a href="https://github.com/redbadger/crux/blob/master/examples/counter/Android/app/src/main/java/com/example/counter/MainActivity.kt">Counter example</a> in the Crux repository.</p>
+<pre><code class="language-kotlin">@Composable
+fun View(model: Model = viewModel()) {
+    val coroutineScope = rememberCoroutineScope()
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
+    ) {
+        Text(text = &quot;Crux Counter Example&quot;, fontSize = 30.sp, modifier = Modifier.padding(10.dp))
+        Text(text = &quot;Rust Core, Kotlin Shell (Jetpack Compose)&quot;, modifier = Modifier.padding(10.dp))
+        Text(text = model.view.text, color = if(model.view.confirmed) { Color.Black } else { Color.Gray }, modifier = Modifier.padding(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Button(
+                onClick = { coroutineScope.launch { model.update(CoreMessage.Event(Evt.Decrement())) } },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.hsl(44F, 1F, 0.77F))
+            ) { Text(text = &quot;Decrement&quot;, color = Color.DarkGray) }
+            Button(
+                onClick = { coroutineScope.launch { model.update(CoreMessage.Event(Evt.Increment())) } },
+                colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = Color.hsl(348F, 0.86F, 0.61F)
+                )
+            ) { Text(text = &quot;Increment&quot;, color = Color.White) }
+        }
+    }
+}
+</code></pre>
+<p>Notice that the first thing we do is create a CoroutineScope that is scoped to the lifetime of the View (i.e. will be destroyed when the <code>View</code> component is unmounted). Then we use this scope to launch asynchronous tasks to call the <code>update</code> method with the specific event. <code>Button(onClick = { coroutineScope.launch { model.update(CoreMessage.Event(Evt.Increment())) } })</code>. We can't call <code>update</code> directly, because it is <code>suspend</code> so we need to be in an asynchronous context to do so.</p>
+<h2 id="the-capabilities"><a class="header" href="#the-capabilities">The capabilities</a></h2>
+<p>We want the shell to be as thin as possible, so we need to write as little platform-specific code as we can because this work has to be duplicated for each platform.</p>
+<p>In general, the more domain-aligned our capabilities are, the more code we'll write. When our capabilities are generic, and closer to the technical end of the spectrum, we get to write the least amount of shell code to support them. Getting the balance right can be tricky, and the right answer might be different depending on context. Obviously the <code>Http</code> capability is very generic, but a CMS capability, for instance, might well be much more specific.</p>
+<p>The shell-side code for the <code>Http</code> capability can be very small. A (very) naive implementation for Android might look like this:</p>
+<pre><code class="language-kotlin">package com.example.counter
+
+import com.example.counter.shared_types.HttpHeader
+import com.example.counter.shared_types.HttpResponse
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+
+suspend fun http(
+    client: HttpClient,
+    method: HttpMethod,
+    url: String,
+    headers: List&lt;HttpHeader&gt;
+): HttpResponse {
+    val response = client.request(url) {
+        this.method = method
+        this.headers {
+            for (header in headers) {
+                append(header.name, header.value)
+            }
+        }
+    }
+    val bytes: ByteArray = response.body()
+    return HttpResponse(response.status.value.toShort(), bytes.toList())
+}
+</code></pre>
+<p>The shell-side code to support a capability (or &quot;Port&quot; in &quot;Ports and Adapters&quot;), is effectively just an &quot;Adapter&quot; (in the same terminology) to the native APIs. Note that it's the shell's responsibility to cater for threading and/or async coroutine requirements (so the above Kotlin function is <code>suspend</code> for this reason).</p>
+<p>The above function can then be called by the shell when an effect is emitted requesting an HTTP call. It can then post the response back to the core (along with the <code>uuid</code> that is used by the core to tie the response up to its original request):</p>
+<pre><code class="language-kotlin">for (req in requests) when (val effect = req.effect) {
+    is Effect.Http -&gt; {
+        val response = http(
+            httpClient,
+            HttpMethod(effect.value.method),
+            effect.value.url
+        )
+        update(
+            CoreMessage.Response(
+                req.uuid.toByteArray().toUByteArray().toList(),
+                Outcome.Http(response)
+            )
+        )
+    }
+    // ...
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="composable-applications"><a class="header" href="#composable-applications">Composable Applications</a></h1>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="guide/composing.html#admonition-info"></a></p>
+</div>
+<div>
+<p>Coming soon.</p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ffi-interface"><a class="header" href="#ffi-interface">FFI interface</a></h1>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="internals/uniffi.html#admonition-info"></a></p>
+</div>
+<div>
+<p>Coming soon.</p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="core-api"><a class="header" href="#core-api">Core API</a></h1>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="internals/core_api.html#admonition-info"></a></p>
+</div>
+<div>
+<p>Coming soon.</p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="type-generation"><a class="header" href="#type-generation">Type generation</a></h1>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="internals/typegen.html#admonition-info"></a></p>
+</div>
+<div>
+<p>Coming soon.</p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="serialization"><a class="header" href="#serialization">Serialization</a></h1>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="internals/serialization.html#admonition-info"></a></p>
+</div>
+<div>
+<p>Coming soon.</p>
+</div>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="continuations"><a class="header" href="#continuations">Continuations</a></h1>
+<div id="admonition-info" class="admonition info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="internals/continuations.html#admonition-info"></a></p>
+</div>
+<div>
+<p>Coming soon.</p>
+</div>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
