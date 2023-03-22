@@ -13,7 +13,7 @@ The UI layer is as thin as it can be, and all other work is done by the shared c
 
 > Note, that Crux is experimental and currently under active development (probably not ready for use in production apps just yet). However, the master branch should always be working well, and we will try to keep the examples and documentation up to date as we go. We _do_ think that the API has now settled, so have a play! :-)
 
-This readme describes at a high level how Crux works, but you can find more details in the [book](https://redbadger.github.io/crux).
+This readme describes at a high level how Crux works, but you can find more details in the [book](https://redbadger.github.io/crux). Or watch the [introductory talk](https://www.youtube.com/watch?v=cWCZms92-1g&t=5s) at the recent [Rust Nation 2023](https://www.rustnationuk.com/) conference in London.
 
 You can also join the friendly conversation on our [Zulip channel](https://crux-community.zulipchat.com).
 
@@ -143,7 +143,7 @@ Refer to the [Getting Started](https://redbadger.github.io/crux/getting_started/
 ---
 ## Sponsors
 
-Crux is kindly sponsored by the following organizations. Your help is kindly appreciated.
+Crux is kindly sponsored by the following organizations. Your help is very much appreciated.
 
 ---
 ### Red Badger Consulting Limited
@@ -158,3 +158,7 @@ Crux is kindly sponsored by the following organizations. Your help is kindly app
 <img src="./docs/src/images/zulip-icon-circle.svg" alt="Zulip round icon" height="40px"/>
 
 [Zulip](https://zulip.com/) is an open-source modern team chat app designed to keep both live and asynchronous conversations organized.
+
+Zulip sponsor Crux by providing our [Zulip server](https://crux-community.zulipchat.com) — thank you Zulip!
+
+---
