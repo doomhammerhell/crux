@@ -81,6 +81,7 @@ pub struct CatFacts {
     platform: platform::Platform,
 }
 
+#[cfg_attr(feature = "typegen", derive(crux_macros::Export))]
 #[derive(Effect)]
 #[effect(app = "CatFacts")]
 pub struct CatFactCapabilities {

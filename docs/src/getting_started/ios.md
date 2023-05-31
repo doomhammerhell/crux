@@ -1,13 +1,17 @@
-# iOS — Swift and SwiftUI
+# iOS — Swift and SwiftUI — manual setup
 
 These are the steps to set up Xcode to build and run a simple iOS app that calls into a shared core.
 
+```admonish tip
+We think that using [XcodeGen](https://github.com/yonaskolb/XcodeGen) may be the simplest way to create an Xcode project to build and run a simple iOS app that calls into a shared core. If you want to try this, you can jump to [iOS — using XcodeGen](./ios_with_xcodegen.md), otherwise read on.
+```
+
 ```admonish
-This walk-through assumes you have already added the `shared` and `shared_types` libraries to your repo, as described in [Shared core and types](./core.md).
+This walk-through assumes you have already added the `shared` and `shared_types` libraries to your repo — as described in [Shared core and types](./core.md) — and that you have built them using `cargo build`.
 ```
 
 ```admonish warning title="Sharp edge"
-We want to make setting up Xcode to work with Crux really easy. As time progresses we will try to simplify and automate as much as possible, but at the moment there is some manual configuration to do. This only needs doing once, so we hope it's not too much trouble. If you know of any better ways than those we describe below (e.g. how to do Xcode project configuration from the command line), please either raise an issue (or a PR) at <https://github.com/redbadger/crux>.
+We want to make setting up Xcode to work with Crux really easy. As time progresses we will try to simplify and automate as much as possible, but at the moment there is some manual configuration to do. This only needs doing once, so we hope it's not too much trouble.
 ```
 
 ## Create an iOS App
@@ -50,7 +54,7 @@ To achieve this, we'll associate a script with files that match the pattern `*.u
 
 Note that our shared library generates the `uniffi-bindgen` binary (as explained on the page ["Shared core and types"](./core.md)) that the script relies on, so make sure you have built it already, using `cargo build`.
 
-In "Build Rules", add a rule to process files that match the pattern `*.udl` with the following script (and also uncheck "Run once per architecture").
+In "**Build Rules**", add a rule to process files that match the pattern `*.udl` with the following script (and also uncheck "**Run once per architecture**").
 
 ```bash
 # Skip during indexing phase in XCode 13+
@@ -79,7 +83,7 @@ $(PROJECT_DIR)/generated/$(INPUT_FILE_BASE).swift
 $(PROJECT_DIR)/generated/$(INPUT_FILE_BASE)FFI.h
 ```
 
-Now go to "Build Phases" => "Compile Sources", and add `/shared/src/shared.udl` using the "add other" button, selecting "Create folder references".
+Now go to "**Build Phases, Compile Sources**", and add `/shared/src/shared.udl` using the "add other" button, selecting "Create folder references".
 
 Build the project (cmd-B), which will fail, but the above script should run successfully and the "generated" folder should contain the generated Swift types and C header files:
 
@@ -90,7 +94,7 @@ shared.swift  sharedFFI.h  sharedFFI.modulemap
 
 ### Add the bridging header
 
-In "Build Settings", search for "bridging header", and add `generated/sharedFFI.h`, for any architecture/SDK, i.e. in both Debug and Release.
+In "**Build Settings**", search for "bridging header", and add `generated/sharedFFI.h`, for any architecture/SDK, i.e. in both Debug and Release.
 If there isn't already a setting for "bridging header" you can add one (and then delete it) as per [this StackOverflow question](https://stackoverflow.com/questions/41787935/how-to-use-objective-c-bridging-header-in-a-swift-project/41788055#41788055)
 
 
@@ -114,15 +118,13 @@ This generates an Xcode project for each crate in the workspace, but we're only 
 
 Using Finder, drag the `shared/shared.xcodeproj` folder under the Xcode project root.
 
-Then, in "Build Phases", add the static library to the "Link Binary with Libraries" section (you should be able to navigate to it under `Workspace -> shared -> libshared_static.a`)
+Then, in the "**Build Phases, Link Binary with Libraries**" section, add the `libshared_static.a` library (you should be able to navigate to it as `Workspace -> shared -> libshared_static.a`)
 
 ## Add the Shared Types
 
-In `File -> Add Files to "CounterApp"`, add `/shared_types/generated/swift/shared_types.swift`.
+Using Finder, drag the `shared_types/generated/swift/SharedTypes` folder under the Xcode project root.
 
-## Add the `Serde` package
-
-In order to serialize data across the "bridge" we need to add the [`Serde` package](https://github.com/starcoin-sdk/Serde.swift) to our project. You can do this with `File -> Add Packages` and search for "https://github.com/starcoin-sdk/Serde.swift".
+Then, in the "**Build Phases, Link Binary with Libraries**" section, add the `SharedTypes` library (you should be able to navigate to it as `Workspace -> SharedTypes -> SharedTypes`)
 
 ## Create some UI and run in the Simulator, or on an iPhone
 
@@ -137,106 +139,13 @@ However, the simplest example is the [Hello World counter example](https://githu
 Edit `ContentView.swift` to look like this:
 
 ```swift
-import Serde
-import SwiftUI
-
-enum Message {
-    case message(Event)
-}
-
-@MainActor
-class Model: ObservableObject {
-    @Published var view = ViewModel(count: "")
-
-    init() {
-        update(msg: .message(.reset))
-    }
-
-    func update(msg: Message) {
-        let reqs: [Request]
-
-        switch msg {
-        case let .message(m):
-            reqs = try! [Request].bcsDeserialize(input: CounterApp.processEvent(try! m.bcsSerialize()))
-        }
-
-        for req in reqs {
-            switch req.effect {
-            case .render(_): view = try! ViewModel.bcsDeserialize(input: CounterApp.view())
-            }
-        }
-    }
-}
-
-struct ActionButton: View {
-    var label: String
-    var color: Color
-    var action: () -> Void
-
-    init(label: String, color: Color, action: @escaping () -> Void) {
-        self.label = label
-        self.color = color
-        self.action = action
-    }
-
-    var body: some View {
-        Button(action: action) {
-            Text(label)
-                .fontWeight(.bold)
-                .font(.body)
-                .padding(EdgeInsets(top: 10, leading: 15, bottom: 10, trailing: 15))
-                .background(color)
-                .cornerRadius(10)
-                .foregroundColor(.white)
-                .padding()
-        }
-    }
-}
-
-struct ContentView: View {
-    @ObservedObject var model: Model
-
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text(model.view.count)
-            HStack {
-                ActionButton(label: "Reset", color: .red) {
-                    model.update(msg: .message(.reset))
-                }
-                ActionButton(label: "Inc", color: .green) {
-                    model.update(msg: .message(.increment))
-                }
-                ActionButton(label: "Dec", color: .yellow) {
-                    model.update(msg: .message(.decrement))
-                }
-            }
-        }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView(model: Model())
-    }
-}
+{{#include ../../../examples/hello_world/iOS/CounterApp/ContentView.swift}}
 ```
 
 And edit `CounterAppApp.swift` to look like this:
 
 ```swift
-import SwiftUI
-
-@main
-struct CounterAppApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView(model: Model())
-        }
-    }
-}
+{{#include ../../../examples/hello_world/iOS/CounterApp/CounterAppApp.swift}}
 ```
 
 ```admonish success

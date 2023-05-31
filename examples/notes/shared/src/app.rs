@@ -100,6 +100,7 @@ impl From<&Model> for ViewModel {
     }
 }
 
+#[cfg_attr(feature = "typegen", derive(crux_macros::Export))]
 #[derive(Effect)]
 #[effect(app = "NoteEditor")]
 pub struct Capabilities {
